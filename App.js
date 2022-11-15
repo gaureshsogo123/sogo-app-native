@@ -7,7 +7,6 @@ import BottomNav from './src/layout/BottomNav';
 
 const Stack = createNativeStackNavigator();
 
-
 export default function App() {
   return (
     <NavigationContainer>
@@ -18,4 +17,3 @@ export default function App() {
 
   );
 }
-
