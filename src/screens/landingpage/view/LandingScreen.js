@@ -11,18 +11,17 @@ import {
 import { TextInput } from "react-native-paper";
 import { CustomerPracticeApi } from "../../../CustomerPracticeApi";
 
-export default function LandingScreen({navigation}) {
-    const [data,setData]=useState(CustomerPracticeApi)
+export default function LandingScreen({ navigation }) {
+  const [data, setData] = useState(CustomerPracticeApi);
 
-    const handlePress = (name)=>{
-      
-      navigation.navigate("orders",{
-        nm : name
-      })
-    }
+  const handlePress = (item) => {
+    navigation.navigate(`salesorder`, {
+      retailerName: item.name,
+      retailerId: item.id,
+    });
+  };
   return (
-
-        <View style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.pagecontainer}>
         <Text style={{ fontWeight: "700", fontSize: 18, paddingBottom: "5%" }}>
           Vignesh Foods
@@ -34,32 +33,27 @@ export default function LandingScreen({navigation}) {
         <TextInput style={styles.input} placeholder="Search Customers" />
 
         <View style={styles.listcontainer}>
-          <FlatList 
-          data={data}
-          renderItem={({item})=>{
-            return (
-                <TouchableOpacity onPress={()=>handlePress(item.name)}>
-                  <View style={styles.list}>
-                  
-                  <Text style={{fontSize:15,fontWeight:"600"}}>{item.name}</Text>
-                 
-              </View>
-                </TouchableOpacity>
-            )
-          }}
-          scrollEnabled={true}
-          style={{flex:1}}/>
+          <FlatList
+            data={data}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handlePress(item)}>
+                <View style={styles.list}>
+                  <Text style={{ fontSize: 15, fontWeight: "600" }}>
+                    {item.name}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            scrollEnabled={true}
+          />
         </View>
       </View>
     </View>
-    
- 
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    
     justifyContent: "flex-start",
     alignItems: "flex-start",
   },
@@ -79,14 +73,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 60,
   },
-  list:{
-    
-    width:"100%",
-    padding:"5%",
-    borderBottomColor:"black",
-    borderBottomWidth:1
+  list: {
+    width: "100%",
+    padding: "5%",
+    borderBottomColor: "black",
+    borderBottomWidth: 1,
   },
-  listcontainer:{
-    marginBottom:100,
-  }
+  listcontainer: {
+    marginBottom: 100,
+  },
 });
