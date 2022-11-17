@@ -5,6 +5,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomNav from './src/layout/BottomNav';
 
 
+
+
+
+
+
+
+
 const Stack = createNativeStackNavigator();
 
 

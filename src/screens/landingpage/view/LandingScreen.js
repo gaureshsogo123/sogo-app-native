@@ -9,59 +9,61 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-paper";
+import CityFilter from "../../../component/CityFilter";
 import { CustomerPracticeApi } from "../../../CustomerPracticeApi";
 
-export default function LandingScreen({navigation}) {
-    const [data,setData]=useState(CustomerPracticeApi)
-
-    const handlePress = (name)=>{
-      
-      navigation.navigate("orders",{
-        nm : name
-      })
-    }
+export default function LandingScreen({ navigation }) {
+  const [data, setData] = useState(CustomerPracticeApi);
+  const handlePress = (name) => {
+    navigation.navigate("orders", {
+      nm: name,
+    });
+  };
   return (
-
-        <View style={styles.container}>
-      <View style={styles.pagecontainer}>
-        <Text style={{ fontWeight: "700", fontSize: 18, paddingBottom: "5%" }}>
-          Vignesh Foods
-        </Text>
-        <TouchableOpacity style={styles.btn}>
-          <Text style={{ color: "white", fontSize: 15 }}>Select Customer</Text>
-        </TouchableOpacity>
-
-        <TextInput style={styles.input} placeholder="Search Customers" />
-
-        <View style={styles.listcontainer}>
-          <FlatList 
-          data={data}
-          renderItem={({item})=>{
-            return (
-                <TouchableOpacity onPress={()=>handlePress(item.name)}>
-                  <View style={styles.list}>
-                  
-                  <Text style={{fontSize:15,fontWeight:"600"}}>{item.name}</Text>
-                 
-              </View>
-                </TouchableOpacity>
-            )
-          }}
-          scrollEnabled={true}
-          style={{flex:1}}/>
+    <>
+      <View style={styles.container}>
+        <View style={styles.pagecontainer}>
+          <Text
+            style={{ fontWeight: "700", fontSize: 18, paddingBottom: "5%" }}
+          >
+            Vignesh Foods
+          </Text>
+          <TouchableOpacity style={styles.btn}>
+            <Text style={{ color: "white", fontSize: 15 }}>
+              Select Customer
+            </Text>
+          </TouchableOpacity>
+          <Text style={{ paddingBottom: 4, fontWeight: "600", fontSize: 15 }}>
+            Select City
+          </Text>
+          <CityFilter />
+          <TextInput style={styles.input} placeholder="Search Customers" />
         </View>
       </View>
-    </View>
-    
- 
+
+      <FlatList
+        data={data}
+        renderItem={({ item }) => {
+          return (
+            <TouchableOpacity onPress={() => handlePress(item.name)}>
+              <View style={styles.list}>
+                <Text style={{ fontSize: 15, fontWeight: "600" }}>
+                  {item.name}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          );
+        }}
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    
     justifyContent: "flex-start",
     alignItems: "flex-start",
+    width: "100%",
   },
   pagecontainer: {
     width: "100%",
@@ -70,23 +72,26 @@ const styles = StyleSheet.create({
   btn: {
     width: "100%",
     padding: 20,
-    height: 60,
     backgroundColor: "darkblue",
     alignItems: "center",
-    marginBottom: "10%",
+    marginBottom: "5%",
   },
   input: {
     width: "100%",
-    height: 60,
+    height: 50,
+    borderRadius: 10,
   },
-  list:{
-    
-    width:"100%",
-    padding:"5%",
-    borderBottomColor:"black",
-    borderBottomWidth:1
+  list: {
+    width: "95%",
+    height: "auto",
+    padding: 20,
+    borderRadius: 15,
+    marginBottom: "3%",
+    alignItems: "center",
+    marginLeft: "3%",
+    backgroundColor: "#fafafa",
+    borderColor: "silver",
+    borderWidth: 1,
   },
-  listcontainer:{
-    marginBottom:100,
-  }
+  listcontainer: {},
 });

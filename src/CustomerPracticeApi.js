@@ -12,5 +12,13 @@ export const CustomerPracticeApi = [
   
 ];
 
+export const City = [
+  {key:'1', value:'Mumbai'},
+  {key:'2', value:'Delhi'},
+  {key:'3', value:'Chennai'},
+  {key:'4', value:'Kerla'},
+  {key:'5', value:'Madgaon'},
+
+]
 
 
