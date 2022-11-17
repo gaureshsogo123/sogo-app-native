@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   Button,
@@ -8,7 +8,7 @@ import {
   HelperText,
 } from "react-native-paper";
 import { signIn, signUp } from "../helpers/signinHelper";
-import { loginUser } from "../../../services/authService";
+import { useAuthContext } from "../../../contexts/authContext";
 
 const styles = StyleSheet.create({
   sogoBg: {
@@ -44,6 +44,12 @@ function SignIn({ navigation }) {
   const [errors, setErrors] = useState({});
   const [otpGenerated, setOtpGenerated] = useState(false);
 
+  const { loginUser, isLoggedIn } = useAuthContext();
+
+  useEffect(() => {
+    if (isLoggedIn()) navigation.navigate("Home");
+  }, []);
+
   const validateMobile = () => {
     const regex = new RegExp(/^\d{10}$/);
     return regex.test(mobileNumber);
@@ -74,13 +80,15 @@ function SignIn({ navigation }) {
       setErrors({ ...errors, otp: "Please enter a valid OTP" });
     else {
       //code for signin
-      signIn({ mobile_no: mobileNumber }).then((res) => {
-        if (!res.error) {
-          loginUser(res.data);
-          resetInputs();
-          navigation.navigate("Home");
-        }
-      });
+      signIn({ mobile_no: mobileNumber })
+        .then((res) => {
+          if (!res.error) {
+            loginUser(res.data);
+            resetInputs();
+            navigation.navigate("Home");
+          }
+        })
+        .catch((err) => setErrors({ ...errors, otp: err.message }));
     }
   };
 
@@ -101,6 +109,7 @@ function SignIn({ navigation }) {
               style={styles.textInput}
               mode="outlined"
               label={"Phone number"}
+              keyboardType={"numeric"}
               value={mobileNumber}
               onChangeText={(e) => {
                 if (/^\d[0-9]*$/.test(e) || e === "") {
@@ -139,7 +148,7 @@ function SignIn({ navigation }) {
             <View>
               <TextInput
                 style={styles.textInput}
-                keyboardType="number-pad"
+                keyboardType="numeric"
                 mode="outlined"
                 label={"Enter OTP"}
                 value={otp}
