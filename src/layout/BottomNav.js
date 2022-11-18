@@ -6,14 +6,16 @@ import SalesOrder from "../screens/SalesOrder/views/SalesOrder";
 import OrderReport from "../screens/orderreport/view/OrderReport";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SignIn from "../screens/SignIn/views/SignIn";
+import { useAuthContext } from "../contexts/authContext";
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomNav() {
+  const { user } = useAuthContext();
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name="Home"
+        name={user.userName}
         component={LandingScreen}
         options={{
           tabBarIcon: () => <BottomIconContainer name="home" />,

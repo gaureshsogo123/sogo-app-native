@@ -109,9 +109,6 @@ function SalesOrder({ route }) {
               <View>
                 <Text variant="titleMedium">{item.name} </Text>
                 <Text style={styles.price} variant="titleSmall">
-                  MRP: {item.mrp}{" "}
-                </Text>
-                <Text style={styles.price} variant="titleSmall">
                   Price: {item.saleprice}{" "}
                 </Text>
                 <Text variant="titleSmall">

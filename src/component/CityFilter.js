@@ -1,21 +1,14 @@
-import React, { useState } from "react";
-import { View, Text } from "react-native";
+import React from "react";
 import { SelectList } from "react-native-dropdown-select-list";
-import { City } from "../CustomerPracticeApi";
 
-function CityFilter() {
-  const [selected, setSelected] = useState("");
-  const [city, setCity] = useState(City);
-
+function CityFilter({ cities, setCity }) {
   return (
-    <View>
-      <SelectList
-        setSelected={(val) => setSelected(val)}
-        data={city}
-        save="value"
-        boxStyles={{ marginBottom: 20 }}
-      />
-    </View>
+    <SelectList
+      setSelected={(val) => setCity(val.toLowerCase())}
+      placeholder="Select City"
+      data={cities}
+      save="value"
+    />
   );
 }
 
