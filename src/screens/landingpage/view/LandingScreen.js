@@ -1,21 +1,38 @@
-import React, { useState } from "react";
-import {
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { TextInput } from "react-native-paper";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { TextInput, Text, HelperText } from "react-native-paper";
 import CityFilter from "../../../component/CityFilter";
-import { CustomerPracticeApi } from "../../../CustomerPracticeApi";
 import { useAuthContext } from "../../../contexts/authContext";
+import { getRetailers } from "../helpers/landingPageHelper";
 
 export default function LandingScreen({ navigation }) {
-  const [data, setData] = useState(CustomerPracticeApi);
+  const [retailers, setRetailers] = useState([]);
+  const [city, setCity] = useState("");
+  const [errors, setErrors] = useState({});
+  const [filterText, setFilterText] = useState("");
+
+  const cities = [
+    { key: "1", value: "Mumbai" },
+    { key: "2", value: "Delhi" },
+    { key: "3", value: "Chennai" },
+    { key: "4", value: "Kerla" },
+    { key: "5", value: "Madgaon" },
+  ];
   const { user } = useAuthContext();
+
+  useEffect(() => {
+    const getStores = async () => {
+      if (!user) return;
+      getRetailers(user.userId)
+        .then((data) => {
+          setRetailers(data);
+        })
+        .catch(() =>
+          setErrors({ ...errors, retailers: "Couldn't get retailers" })
+        );
+    };
+    getStores();
+  }, [user?.userId]);
 
   const handlePress = (item) => {
     navigation.navigate(`salesorder`, {
@@ -23,42 +40,46 @@ export default function LandingScreen({ navigation }) {
       retailerId: item.id,
     });
   };
+
+  const filteredRetailers = useMemo(() => {
+    return (
+      retailers &&
+      retailers.filter(
+        (retailer) =>
+          filterText === "" || retailer.name.toLowerCase().includes(filterText)
+      )
+    );
+  }, [filterText, city, retailers]);
+
+  const renderRetailer = useCallback(({ item }) => {
+    return (
+      <TouchableOpacity onPress={() => handlePress(item)}>
+        <View style={styles.list}>
+          <Text variant="titleSmall">{item.name}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }, []);
   return (
     <>
       <View style={styles.container}>
         <View style={styles.pagecontainer}>
-          <Text
-            style={{ fontWeight: "700", fontSize: 18, paddingBottom: "5%" }}
-          >
-            Vignesh Foods
+          <Text style={{ fontWeight: "700", fontSize: 18, paddingBottom: 3 }}>
+            Select Customer
           </Text>
-          <TouchableOpacity style={styles.btn}>
-            <Text style={{ color: "white", fontSize: 15 }}>
-              Select Customer
-            </Text>
-          </TouchableOpacity>
-          <Text style={{ paddingBottom: 4, fontWeight: "600", fontSize: 15 }}>
-            Select City
-          </Text>
-          <CityFilter />
-          <TextInput style={styles.input} placeholder="Search Customers" />
+          <TextInput
+            style={styles.input}
+            placeholder="Search retailers"
+            onChangeText={(text) => setFilterText(text.toLowerCase())}
+          />
+          <CityFilter cities={cities} setCity={setCity} />
+          <HelperText type="error" visible={errors.retailers}>
+            {errors.retailers}{" "}
+          </HelperText>
         </View>
       </View>
 
-      <FlatList
-        data={data}
-        renderItem={({ item }) => {
-          return (
-            <TouchableOpacity onPress={() => handlePress(item.name)}>
-              <View style={styles.list}>
-                <Text style={{ fontSize: 15, fontWeight: "600" }}>
-                  {item.name}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
-      />
+      <FlatList data={filteredRetailers} renderItem={renderRetailer} />
     </>
   );
 }
@@ -81,6 +102,7 @@ const styles = StyleSheet.create({
     marginBottom: "5%",
   },
   input: {
+    marginBottom: 5,
     width: "100%",
     height: 50,
     borderRadius: 10,
@@ -91,7 +113,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 15,
     marginBottom: "3%",
-    alignItems: "center",
     marginLeft: "3%",
     backgroundColor: "#fafafa",
     borderColor: "silver",

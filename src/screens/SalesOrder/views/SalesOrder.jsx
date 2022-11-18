@@ -110,7 +110,7 @@ function SalesOrder({ route }) {
     return products.filter((product) =>
       product.name.toLowerCase().includes(searchFilter.toLowerCase())
     );
-  }, [searchFilter]);
+  }, [searchFilter, products]);
 
   const productKeyExtractor = useCallback((product) => product.id);
 

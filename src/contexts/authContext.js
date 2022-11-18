@@ -10,7 +10,7 @@ const AuthContextProvider = ({ children }) => {
     const getUser = async () => {
       let user = {};
       user.userId = await AsyncStorage.getItem("userId");
-      user.name = await AsyncStorage.getItem("userName");
+      user.userName = await AsyncStorage.getItem("userName");
       user.role = await AsyncStorage.getItem("role");
       setUser(user);
     };
