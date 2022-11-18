@@ -10,9 +10,11 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import { CustomerPracticeApi } from "../../../CustomerPracticeApi";
+import { useAuthContext } from "../../../contexts/authContext";
 
 export default function LandingScreen({ navigation }) {
   const [data, setData] = useState(CustomerPracticeApi);
+  const { user } = useAuthContext();
 
   const handlePress = (item) => {
     navigation.navigate(`salesorder`, {
@@ -24,7 +26,7 @@ export default function LandingScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.pagecontainer}>
         <Text style={{ fontWeight: "700", fontSize: 18, paddingBottom: "5%" }}>
-          Vignesh Foods
+          {user?.name}
         </Text>
         <TouchableOpacity style={styles.btn}>
           <Text style={{ color: "white", fontSize: 15 }}>Select Customer</Text>
