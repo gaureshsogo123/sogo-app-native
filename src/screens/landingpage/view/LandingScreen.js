@@ -11,9 +11,11 @@ import {
 import { TextInput } from "react-native-paper";
 import CityFilter from "../../../component/CityFilter";
 import { CustomerPracticeApi } from "../../../CustomerPracticeApi";
+import { useAuthContext } from "../../../contexts/authContext";
 
 export default function LandingScreen({ navigation }) {
   const [data, setData] = useState(CustomerPracticeApi);
+  const { user } = useAuthContext();
 
   const handlePress = (item) => {
     navigation.navigate(`salesorder`, {
