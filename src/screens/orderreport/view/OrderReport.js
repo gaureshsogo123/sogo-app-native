@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -13,18 +14,14 @@ import DatePicker from "../../../component/DatePicker";
 import CitySmallFilter from "../../../component/CitySmallFilter";
 import StatusFilter from "../../../component/StatusFilter";
 
-export default function Orders({ route, navigation }) {
-  const data = [
-    { name: "Ganesh Stores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-  ];
+export default function OrderReport({ route, navigation }) {
 
+  const data = [
+    {inm:"dosa batterr",Qty:20,price:200},
+    {inm:"Chapati",Qty:30,price:300},
+    {inm:"Ata", Qty:20,price:200}
+  ]
+  
   return (
     <>
       <View style={styles.container}>
@@ -67,13 +64,8 @@ export default function Orders({ route, navigation }) {
                 {<CitySmallFilter />}
               </View>
             </View>
-            <View style={styles.locationcontainer}>
-              <Text style={{ fontWeight: "600", fontSize: 15 }}>Status :</Text>
-              <View style={{ marginTop: -10, marginBottom: 5 }}>
-                {<StatusFilter />}
-              </View>
-            </View>
-          </View>
+            
+                      </View>
 
           <TextInput style={styles.input} placeholder="Search Retailers" />
 
@@ -83,27 +75,35 @@ export default function Orders({ route, navigation }) {
           ></View>
         </View>
       </View>
-      <FlatList
-        data={data}
-        renderItem={({ item }) => {
-          return (
-            <View style={styles.listcontainer}>
-              <Text style={{ fontWeight: "600", paddingBottom: 10 }}>
-                {item.name}
-              </Text>
-              <Text style={{ fontWeight: "400" }}>
-                26 Oct Status : Delivered
-              </Text>
-              <View style={styles.rightitems}>
-                <Text style={{ paddingTop: 10 }}>Amt : Rs.100</Text>
-                <TouchableOpacity>
-                  <AntDesign name="edit" size={25} style={{ paddingTop: 10 }} />
-                </TouchableOpacity>
-              </View>
+     
+     <ScrollView>
+        <View style={styles.container}>
+            <View style={styles.pagecontainer}>
+            <Text style={{marginTop:-10,marginBottom:5}}>Total : Rs.1000</Text>
+                <View style={styles.reportHead}>
+                    <Text style={{width:'auto'}}>Item Name</Text>
+                    <Text style={{width:'auto'}}>Qty</Text>
+                    <Text>Amount</Text>
+                </View>
+
+
+                <>
+                    {
+                        data.map((itm,i)=>{
+                            return (
+                                <View style={styles.reportdata} key={i}>
+                                    <Text>{itm.inm}</Text>
+                                    <Text>{itm.Qty}</Text>
+                                    <Text>{itm.price}</Text>
+                                </View>
+                            )
+                        })
+                    }
+                </>
             </View>
-          );
-        }}
-      />
+
+        </View>
+     </ScrollView>
     </>
   );
 }
@@ -157,4 +157,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: "3%",
   },
+  reportHead:{
+    display:"flex",
+    flexDirection:"row",
+    justifyContent:'space-around',
+    width:"100%",
+    padding:10,
+    backgroundColor:"lightgray"
+  },
+  reportdata:{
+    display:'flex',
+    flexDirection:"row",
+    justifyContent:"space-around",
+    width:'100%',
+    backgroundColor:"#fafafa",
+    padding:10
+  }
 });
