@@ -15,19 +15,16 @@ import CitySmallFilter from "../../../component/CitySmallFilter";
 import StatusFilter from "../../../component/StatusFilter";
 
 export default function OrderReport({ route, navigation }) {
-
   const data = [
-    {inm:"dosa batterr",Qty:20,price:200},
-    {inm:"Chapati",Qty:30,price:300},
-    {inm:"Ata", Qty:20,price:200}
-  ]
-  
+    { inm: "dosa batterr", Qty: 20, price: 200 },
+    { inm: "Chapati", Qty: 30, price: 300 },
+    { inm: "Ata", Qty: 20, price: 200 },
+  ];
+
   return (
     <>
       <View style={styles.container}>
         <View style={styles.pagecontainer}>
-          
-
           <View
             style={{
               display: "flex",
@@ -64,46 +61,42 @@ export default function OrderReport({ route, navigation }) {
                 {<CitySmallFilter />}
               </View>
             </View>
-            
-                      </View>
+          </View>
 
           <TextInput style={styles.input} placeholder="Search Retailers" />
-
 
           <View
             style={{ width: "100%", borderBottomWidth: 1, marginTop: 10 }}
           ></View>
         </View>
       </View>
-     
-     <ScrollView>
+
+      <ScrollView>
         <View style={styles.container}>
-            <View style={styles.pagecontainer}>
-            <Text style={{marginTop:-10,marginBottom:5}}>Total : Rs.1000</Text>
-                <View style={styles.reportHead}>
-                    <Text style={{width:'auto'}}>Item Name</Text>
-                    <Text style={{width:'auto'}}>Qty</Text>
-                    <Text>Amount</Text>
-                </View>
-
-
-                <>
-                    {
-                        data.map((itm,i)=>{
-                            return (
-                                <View style={styles.reportdata} key={i}>
-                                    <Text>{itm.inm}</Text>
-                                    <Text>{itm.Qty}</Text>
-                                    <Text>{itm.price}</Text>
-                                </View>
-                            )
-                        })
-                    }
-                </>
+          <View style={styles.pagecontainer}>
+            <Text style={{ marginTop: -10, marginBottom: 5 }}>
+              Total : Rs.1000
+            </Text>
+            <View style={styles.reportHead}>
+              <Text style={{ width: "auto" }}>Item Name</Text>
+              <Text style={{ width: "auto" }}>Qty</Text>
+              <Text>Amount</Text>
             </View>
 
+            <>
+              {data.map((itm, i) => {
+                return (
+                  <View style={styles.reportdata} key={i}>
+                    <Text>{itm.inm}</Text>
+                    <Text>{itm.Qty}</Text>
+                    <Text>{itm.price}</Text>
+                  </View>
+                );
+              })}
+            </>
+          </View>
         </View>
-     </ScrollView>
+      </ScrollView>
     </>
   );
 }
@@ -130,7 +123,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     marginBottom: "5%",
-    marginTop:"3%"
+    marginTop: "3%",
   },
   rightitems: {
     position: "absolute",
@@ -145,8 +138,8 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: "3%",
     position: "relative",
-    borderColor:"silver",
-    borderWidth:1
+    borderColor: "silver",
+    borderWidth: 1,
   },
   locationcontainer: {
     display: "flex",
@@ -157,20 +150,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: "3%",
   },
-  reportHead:{
-    display:"flex",
-    flexDirection:"row",
-    justifyContent:'space-around',
-    width:"100%",
-    padding:10,
-    backgroundColor:"lightgray"
+  reportHead: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    padding: 10,
+    backgroundColor: "lightgray",
   },
-  reportdata:{
-    display:'flex',
-    flexDirection:"row",
-    justifyContent:"space-around",
-    width:'100%',
-    backgroundColor:"#fafafa",
-    padding:10
-  }
+  reportdata: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    backgroundColor: "#fafafa",
+    padding: 10,
+  },
 });
