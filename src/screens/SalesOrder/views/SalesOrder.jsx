@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { Button, useTheme } from "react-native-paper";
 import { TextInput, Text } from "react-native-paper";
@@ -75,6 +75,45 @@ function SalesOrder({ route }) {
     setTotalPrice(total);
   };
 
+  const renderProduct = useCallback(({ item }) => {
+    return (
+      <View
+        style={{
+          ...styles.product,
+          borderBottomColor: theme.colors.primary,
+        }}
+      >
+        <View>
+          <Text variant="titleMedium">{item.name} </Text>
+          <Text style={styles.price} variant="titleSmall">
+            Price: {item.saleprice}{" "}
+          </Text>
+          <Text variant="titleSmall">
+            Total: {item.saleprice * item.units}{" "}
+          </Text>
+        </View>
+        <View style={styles.unitSection}>
+          <TextInput
+            keyboardType="number-pad"
+            style={styles.unitInput}
+            variant="flat"
+            value={item.units === 0 ? "" : item.units + ""}
+            onChangeText={(text) => updateUnits(text, item.id)}
+          />
+          <Text variant="labelLarge"> units</Text>
+        </View>
+      </View>
+    );
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) =>
+      product.name.toLowerCase().includes(searchFilter.toLowerCase())
+    );
+  }, [searchFilter]);
+
+  const productKeyExtractor = useCallback((product) => product.id);
+
   return (
     <>
       <View style={styles.heading}>
@@ -94,40 +133,9 @@ function SalesOrder({ route }) {
       />
       <FlatList
         removeClippedSubviews={false}
-        keyExtractor={(product) => product.id}
-        data={products.filter((product) =>
-          product.name.toLowerCase().includes(searchFilter.toLowerCase())
-        )}
-        renderItem={({ item }) => {
-          return (
-            <View
-              style={{
-                ...styles.product,
-                borderBottomColor: theme.colors.primary,
-              }}
-            >
-              <View>
-                <Text variant="titleMedium">{item.name} </Text>
-                <Text style={styles.price} variant="titleSmall">
-                  Price: {item.saleprice}{" "}
-                </Text>
-                <Text variant="titleSmall">
-                  Total: {item.saleprice * item.units}{" "}
-                </Text>
-              </View>
-              <View style={styles.unitSection}>
-                <TextInput
-                  keyboardType="number-pad"
-                  style={styles.unitInput}
-                  variant="flat"
-                  value={item.units === 0 ? "" : item.units + ""}
-                  onChangeText={(text) => updateUnits(text, item.id)}
-                />
-                <Text variant="labelLarge"> units</Text>
-              </View>
-            </View>
-          );
-        }}
+        keyExtractor={productKeyExtractor}
+        data={filteredProducts}
+        renderItem={renderProduct}
       />
       <Button mode="contained" style={styles.orderButton}>
         Place Order
