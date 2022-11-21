@@ -13,6 +13,7 @@ import CityFilter from "../../../component/CityFilter";
 import DatePicker from "../../../component/DatePicker";
 import CitySmallFilter from "../../../component/CitySmallFilter";
 import StatusFilter from "../../../component/StatusFilter";
+import Table from "../../../component/Table";
 
 export default function OrderReport({ route, navigation }) {
   const data = [
@@ -74,27 +75,10 @@ export default function OrderReport({ route, navigation }) {
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.pagecontainer}>
-            <Text style={{ marginTop: -10, marginBottom: 5 }}>
-              Total : Rs.1000
-            </Text>
-            <View style={styles.reportHead}>
-              <Text style={{ width: "auto" }}>Item Name</Text>
-              <Text style={{ width: "auto" }}>Qty</Text>
-              <Text>Amount</Text>
-            </View>
 
-            <>
-              {data.map((itm, i) => {
-                return (
-                  <View style={styles.reportdata} key={i}>
-                    <Text>{itm.inm}</Text>
-                    <Text>{itm.Qty}</Text>
-                    <Text>{itm.price}</Text>
-                  </View>
-                );
-              })}
-            </>
-          </View>
+            <Table/>
+
+            </View>
         </View>
       </ScrollView>
     </>
