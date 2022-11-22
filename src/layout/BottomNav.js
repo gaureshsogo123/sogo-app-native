@@ -7,6 +7,7 @@ import OrderReport from "../screens/orderreport/view/OrderReport";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SignIn from "../screens/SignIn/views/SignIn";
 import { useAuthContext } from "../contexts/authContext";
+import Signout from "../screens/Signout/view/Signout,";
 
 const Tab = createBottomTabNavigator();
 
@@ -22,7 +23,7 @@ export default function BottomNav() {
           title: user?.userName || "Home",
         }}
       />
-      <Tab.Screen name="orders" component={Orders} />
+    
       <Tab.Screen
         name="book"
         component={Orders}
@@ -34,13 +35,16 @@ export default function BottomNav() {
         name="orderReport"
         component={OrderReport}
         options={{
-          tabBarIcon: () => (
-            <MaterialCommunityIcons name="home-variant-outline" size={25} />
-          ),
+          tabBarIcon:()=><BottomIconContainer name="filetext1"/>
         }}
       />
       <Tab.Screen name="salesorder" component={SalesOrder} />
       <Tab.Screen name="signin" component={SignIn} />
+      <Tab.Screen name="Sign Out" component={Signout}
+        options={{
+          tabBarIcon:()=><BottomIconContainer name="logout"/>
+        }}/>
+
     </Tab.Navigator>
   );
 }

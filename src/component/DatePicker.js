@@ -1,43 +1,36 @@
 import React, { useState } from "react";
 import { View, Text, Platform, TouchableOpacity } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { Button } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 function DatePicker() {
+  const [datePicker, setDatePicker] = useState(false);
+  
+const [flag,setFlag]=useState(false)
   const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState("date");
-  const [show, setShow] = useState(false);
-  const [text, setText] = useState("Select date");
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
-    setDate(currentDate);
-
-    let tempDate = new Date(currentDate);
-    let fdate =
-      tempDate.getDate() +
-      "/" +
-      (tempDate.getDate() + 1) +
-      "/" +
-      tempDate.getFullYear();
-    setText(fdate);
+  function showDatePicker() {
+    setDatePicker(true);
+    
   };
 
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
+  function onDateSelected(event, value) {
+    setDate(value);
+    setDatePicker(false);
+    setFlag(true)
   };
-
+  let day = date.getDate();
+  let month = date.getMonth();
+  let year = date.getFullYear();
+  
   return (
     <View>
       <View style={{ display: "flex", flexDirection: "row" }}>
-        <TouchableOpacity onPress={() => showMode("date")}>
-          <Text style={{ paddingLeft: 5 }}>{text}</Text>
+        <TouchableOpacity onPress={showDatePicker}>
+          <Text style={{ paddingLeft: 5 }}>{flag?`${day}/${month}/${year}`:"Select Date"}</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => showMode("date")}>
+        
+        <TouchableOpacity  onPress={showDatePicker}>
           <AntDesign
             name="down"
             size={13}
@@ -46,22 +39,20 @@ function DatePicker() {
         </TouchableOpacity>
       </View>
 
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
+      {datePicker && (
+  <DateTimePicker
+    value={date}
+    mode={'date'}
+    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+    is24Hour={true}
+    onChange={onDateSelected}
+  
+  />
+)}
+
     </View>
   );
 }
 
 export default DatePicker;
 
-<Button onPress={() => showMode("date")} uppercase={false} mode="outlined">
-  Select Date
-</Button>;
