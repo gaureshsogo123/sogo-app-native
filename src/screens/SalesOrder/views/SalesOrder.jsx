@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, View } from "react-native";
 import { Button, HelperText, useTheme } from "react-native-paper";
 import { TextInput, Text } from "react-native-paper";
 import { useAuthContext } from "../../../contexts/authContext";
-import { fetchProducts } from "../helpers/salesOrderHelper";
+import { fetchProducts, saveOrder } from "../helpers/salesOrderHelper";
 
 const styles = StyleSheet.create({
   heading: {
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function SalesOrder({ route }) {
+function SalesOrder({ route, navigation }) {
   const theme = useTheme();
 
   const { user } = useAuthContext();
@@ -47,8 +47,30 @@ function SalesOrder({ route }) {
   const { retailerId, retailerName } = route.params;
   const [products, setProducts] = useState([]);
   const [errors, setErrors] = useState({});
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [price, setPrice] = useState({ total: 0, discount: 0, finalPrice: 0 });
   const [searchFilter, setSearchFilter] = useState("");
+
+  const placeOrder = async () => {
+    setErrors({ ...errors, saveOrder: "" });
+    const orderProducts = products.filter((product) => product.quantity !== 0);
+    if (orderProducts.length === 0) return;
+    try {
+      const result = await saveOrder(
+        user.userId,
+        orderProducts.length,
+        price.total,
+        "cash",
+        price.finalPrice,
+        orderProducts,
+        price.discount,
+        retailerId
+      );
+      if (!result.error) navigation.navigate("orders");
+      else setErrors({ ...errors, saveOrder: result.error });
+    } catch (error) {
+      setErrors({ ...errors, saveOrder: "Failed to save order" });
+    }
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -61,7 +83,14 @@ function SalesOrder({ route }) {
             ...errors,
             products: "You do not have any products yet",
           });
-        else setProducts(products.data);
+        else {
+          products.data = products.data.map((product) => ({
+            ...product,
+            quantity: product.quantity || 0,
+            discount: product.discount || 0,
+          }));
+          setProducts(products.data);
+        }
       } catch (err) {
         setErrors({ ...errors, products: "Failed to get products" });
       }
@@ -73,21 +102,26 @@ function SalesOrder({ route }) {
     calculateTotal();
   }, [products]);
 
-  const updateUnits = (amount, id) => {
+  const updateQuantity = (amount, id) => {
     setProducts((products) => {
       let obj = [...products];
       let index = obj.findIndex((item) => item.productid === id);
-      obj[index].units = parseInt(amount || 0);
+      obj[index].quantity = parseInt(amount || 0);
       return obj;
     });
   };
 
   const calculateTotal = () => {
     let total = 0;
+    let discount = 0;
+    let finalPrice = 0;
     products.forEach((product) => {
-      total += product.price * (product.units || 0);
+      finalPrice +=
+        (product.price - product.discount) * (product.quantity || 0);
+      discount += product.discount * (product.quantity || 0);
+      total += product.price * (product.quantity || 0);
     });
-    setTotalPrice(total);
+    setPrice({ total, discount, finalPrice });
   };
 
   const renderProduct = useCallback(({ item }) => {
@@ -103,15 +137,17 @@ function SalesOrder({ route }) {
           <Text style={styles.price} variant="titleSmall">
             Price: {item.price}{" "}
           </Text>
-          <Text variant="titleSmall">Total: {item.price * item.units} </Text>
+          <Text variant="titleSmall">
+            Total: {(item.price - item.discount) * item.quantity}{" "}
+          </Text>
         </View>
         <View style={styles.unitSection}>
           <TextInput
             keyboardType="number-pad"
             style={styles.unitInput}
             variant="flat"
-            value={item.units === 0 ? "" : item.units + ""}
-            onChangeText={(text) => updateUnits(text, item.productid)}
+            value={item.quantity === 0 ? "" : item.quantity + ""}
+            onChangeText={(text) => updateQuantity(text, item.productid)}
           />
           <Text variant="labelLarge"> units</Text>
         </View>
@@ -134,7 +170,7 @@ function SalesOrder({ route }) {
           Outlet: {retailerName}
         </Text>
         <Text style={{ marginBottom: 5 }} variant="titleMedium">
-          Total Price: {`\u20B9`} {parseFloat(totalPrice).toFixed(2)}
+          Total Price: {`\u20B9`} {parseFloat(price.total).toFixed(2)}
         </Text>
       </View>
 
@@ -146,6 +182,9 @@ function SalesOrder({ route }) {
       />
       <HelperText visible={errors.products} type="error">
         {errors.products}{" "}
+      </HelperText>
+      <HelperText visible={errors.saveOrder} type="error">
+        {errors.saveOrder}{" "}
       </HelperText>
       {!products.length ? (
         <Text style={{ textAlign: "center" }} variant="titleLarge">
@@ -160,7 +199,7 @@ function SalesOrder({ route }) {
         />
       )}
 
-      <Button mode="contained" style={styles.orderButton}>
+      <Button onPress={placeOrder} mode="contained" style={styles.orderButton}>
         Place Order
       </Button>
     </>

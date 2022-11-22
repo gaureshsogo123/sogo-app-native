@@ -37,7 +37,7 @@ export default function LandingScreen({ navigation }) {
   const handlePress = (item) => {
     navigation.navigate(`salesorder`, {
       retailerName: item.name,
-      retailerId: item.id,
+      retailerId: item.userid,
     });
   };
 
