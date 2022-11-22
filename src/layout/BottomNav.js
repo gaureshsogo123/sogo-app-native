@@ -19,7 +19,7 @@ export default function BottomNav() {
         component={LandingScreen}
         options={{
           tabBarIcon: () => <BottomIconContainer name="home" />,
-          title: user ? user.userName : "Home",
+          title: user?.userName || "Home",
         }}
       />
       <Tab.Screen name="orders" component={Orders} />

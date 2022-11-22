@@ -14,7 +14,7 @@ export const signIn = async ({ mobile_no }) => {
 
 export const signUp = async ({ mobile_no }) => {
   return axiosInstance
-    .post(SOGO_API + "/user/signUp", { mobile_no })
+    .post("/user/signUp", { mobile_no })
     .then((res) => {
       return { data: res.data.message };
     })
