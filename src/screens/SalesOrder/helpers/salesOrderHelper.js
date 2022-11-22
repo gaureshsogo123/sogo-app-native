@@ -1,62 +1,30 @@
-export const fetchProducts = async () => {
-  return Promise.resolve({
-    data: [
-      {
-        id: 1,
-        name: "Milk bottle",
-        mrp: 40,
-        saleprice: 35,
-        units: 2,
-      },
-      {
-        id: 2,
-        name: "Coconut bottle",
-        mrp: 40,
-        saleprice: 35,
-        units: 3,
-      },
-      {
-        id: 3,
-        name: "Haldi bottle",
-        mrp: 40,
-        saleprice: 35,
+import axiosInstance from "../../../../axiosInstance";
+
+export const fetchProducts = (
+  userId,
+  categoryId,
+  searchText,
+  pageNumber = 1,
+  pageSize = 5
+) => {
+  return axiosInstance
+    .post("/product", {
+      user_id: userId,
+      category_id: categoryId,
+      search_text: searchText,
+      page_number: pageNumber,
+      page_size: pageSize,
+    })
+    .then((res) => {
+      //console.log("get products", res.data.data);
+      const products = res.data.data.map((product) => ({
+        ...product,
         units: 0,
-      },
-      {
-        id: 4,
-        name: "Chicken Masala",
-        mrp: 40,
-        saleprice: 35,
-        units: 1,
-      },
-      {
-        id: 5,
-        name: "Mustard oil",
-        mrp: 40,
-        saleprice: 35,
-        units: 0,
-      },
-      {
-        id: 6,
-        name: "Wheat",
-        mrp: 40,
-        saleprice: 35,
-        units: 0,
-      },
-      {
-        id: 7,
-        name: "Potato",
-        mrp: 40,
-        saleprice: 35,
-        units: 0,
-      },
-      {
-        id: 8,
-        name: "sugar",
-        mrp: 40,
-        saleprice: 35,
-        units: 0,
-      },
-    ],
-  });
+      }));
+      return { data: products };
+    })
+    .catch((err) => {
+      console.log(err);
+      return { error: err.message };
+    });
 };

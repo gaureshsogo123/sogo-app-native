@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { Button, useTheme } from "react-native-paper";
+import { Button, HelperText, useTheme } from "react-native-paper";
 import { TextInput, Text } from "react-native-paper";
+import { useAuthContext } from "../../../contexts/authContext";
 import { fetchProducts } from "../helpers/salesOrderHelper";
 
 const styles = StyleSheet.create({
@@ -41,18 +42,32 @@ const styles = StyleSheet.create({
 function SalesOrder({ route }) {
   const theme = useTheme();
 
+  const { user } = useAuthContext();
+
   const { retailerId, retailerName } = route.params;
   const [products, setProducts] = useState([]);
+  const [errors, setErrors] = useState({});
   const [totalPrice, setTotalPrice] = useState(0);
   const [searchFilter, setSearchFilter] = useState("");
 
   useEffect(() => {
+    if (!user) return;
+    setErrors({ ...errors, products: "" });
     const getProducts = async () => {
-      const products = await fetchProducts();
-      setProducts(products.data);
+      try {
+        const products = await fetchProducts(user.userId, 0, "ALL");
+        if (products.data.length === 0)
+          setErrors({
+            ...errors,
+            products: "You do not have any products yet",
+          });
+        else setProducts(products.data);
+      } catch (err) {
+        setErrors({ ...errors, products: "Failed to get products" });
+      }
     };
     getProducts();
-  }, [retailerId]);
+  }, [user?.userId]);
 
   useEffect(() => {
     calculateTotal();
@@ -61,7 +76,7 @@ function SalesOrder({ route }) {
   const updateUnits = (amount, id) => {
     setProducts((products) => {
       let obj = [...products];
-      let index = obj.findIndex((item) => item.id === id);
+      let index = obj.findIndex((item) => item.productid === id);
       obj[index].units = parseInt(amount || 0);
       return obj;
     });
@@ -70,7 +85,7 @@ function SalesOrder({ route }) {
   const calculateTotal = () => {
     let total = 0;
     products.forEach((product) => {
-      total += product.saleprice * (product.units || 0);
+      total += product.price * (product.units || 0);
     });
     setTotalPrice(total);
   };
@@ -84,13 +99,11 @@ function SalesOrder({ route }) {
         }}
       >
         <View>
-          <Text variant="titleMedium">{item.name} </Text>
+          <Text variant="titleMedium">{item.productname} </Text>
           <Text style={styles.price} variant="titleSmall">
-            Price: {item.saleprice}{" "}
+            Price: {item.price}{" "}
           </Text>
-          <Text variant="titleSmall">
-            Total: {item.saleprice * item.units}{" "}
-          </Text>
+          <Text variant="titleSmall">Total: {item.price * item.units} </Text>
         </View>
         <View style={styles.unitSection}>
           <TextInput
@@ -98,7 +111,7 @@ function SalesOrder({ route }) {
             style={styles.unitInput}
             variant="flat"
             value={item.units === 0 ? "" : item.units + ""}
-            onChangeText={(text) => updateUnits(text, item.id)}
+            onChangeText={(text) => updateUnits(text, item.productid)}
           />
           <Text variant="labelLarge"> units</Text>
         </View>
@@ -108,11 +121,11 @@ function SalesOrder({ route }) {
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) =>
-      product.name.toLowerCase().includes(searchFilter.toLowerCase())
+      product.productname.toLowerCase().includes(searchFilter.toLowerCase())
     );
   }, [searchFilter, products]);
 
-  const productKeyExtractor = useCallback((product) => product.id);
+  const productKeyExtractor = useCallback((product) => product.productid);
 
   return (
     <>
@@ -131,12 +144,22 @@ function SalesOrder({ route }) {
         placeholder="Search products"
         onChangeText={(text) => setSearchFilter(text)}
       />
-      <FlatList
-        removeClippedSubviews={false}
-        keyExtractor={productKeyExtractor}
-        data={filteredProducts}
-        renderItem={renderProduct}
-      />
+      <HelperText visible={errors.products} type="error">
+        {errors.products}{" "}
+      </HelperText>
+      {!products.length ? (
+        <Text style={{ textAlign: "center" }} variant="titleLarge">
+          There are no products!{" "}
+        </Text>
+      ) : (
+        <FlatList
+          removeClippedSubviews={false}
+          keyExtractor={productKeyExtractor}
+          data={filteredProducts}
+          renderItem={renderProduct}
+        />
+      )}
+
       <Button mode="contained" style={styles.orderButton}>
         Place Order
       </Button>

@@ -1,20 +1,23 @@
 import axiosInstance from "../../../../axiosInstance.js";
+import axios from "axios";
 import { SOGO_API } from "@env";
 
 export const signIn = async ({ mobile_no }) => {
-  return axiosInstance
-    .post("/user/signIn", { mobile_no })
+  return axios
+    .post(SOGO_API + "/user/signIn", { mobile_no })
     .then((res) => {
+      console.log(res.data);
       return { message: res.data.message, data: res.data.data };
     })
     .catch((err) => {
+      console.log(err);
       return { error: err.message, data: {} };
     });
 };
 
 export const signUp = async ({ mobile_no }) => {
   return axiosInstance
-    .post(SOGO_API + "/user/signUp", { mobile_no })
+    .post("/user/signUp", { mobile_no })
     .then((res) => {
       return { data: res.data.message };
     })
