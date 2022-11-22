@@ -65,7 +65,7 @@ function SalesOrder({ route, navigation }) {
         price.discount,
         retailerId
       );
-      if (!result.error) navigation.navigate("orders");
+      if (!result.error) navigation.navigate("book");
       else setErrors({ ...errors, saveOrder: result.error });
     } catch (error) {
       setErrors({ ...errors, saveOrder: "Failed to save order" });
