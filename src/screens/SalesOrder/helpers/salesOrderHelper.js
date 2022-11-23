@@ -16,10 +16,7 @@ export const fetchProducts = async (
       page_size: pageSize,
     })
     .then((res) => {
-      const products = res.data.data.map((product) => ({
-        ...product,
-        units: 0,
-      }));
+      const products = res.data.data;
       return { data: products };
     })
     .catch((err) => {
