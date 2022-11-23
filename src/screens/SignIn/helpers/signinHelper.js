@@ -1,5 +1,4 @@
 import axiosInstance from "../../../../axiosInstance.js";
-import { SOGO_API } from "@env";
 
 export const signIn = async ({ mobile_no }) => {
   return axiosInstance
