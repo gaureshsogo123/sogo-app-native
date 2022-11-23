@@ -1,36 +1,84 @@
-import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { TextInput } from "react-native-paper";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { TextInput, Text } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
-import CityFilter from "../../../component/CityFilter";
 import DatePicker from "../../../component/DatePicker";
 import CitySmallFilter from "../../../component/CitySmallFilter";
 import StatusFilter from "../../../component/StatusFilter";
+import { useAuthContext } from "../../../contexts/authContext";
+import { getOrders } from "../helpers/ordersHelper";
 
-export default function Orders({ route, navigation }) {
-  const data = [
-    { name: "Ganesh Stores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-    { name: "Krishna tores" },
-  ];
+function formatDate(string) {
+  const date = new Date(string);
+  return `${date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()}-${
+    date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+  }-${date.getFullYear()}`;
+}
+
+export default function Orders({ navigation }) {
+  const [orders, setOrders] = useState([]);
+  const [searchFilter, setSearchFilter] = useState("");
+  const [errors, setErrors] = useState({});
+  const { user } = useAuthContext();
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchOrders = async () => {
+      try {
+        const result = await getOrders(user.userId);
+        if (result.data) setOrders(result.data);
+        else setErrors({ ...errors, getOrders: "Failed to fetch orders" });
+      } catch (error) {
+        setErrors({ ...errors, getOrders: "Failed to fetch orders" });
+      }
+    };
+    fetchOrders();
+  }, [user?.userId]);
+
+  const redirectToUpdate = (order) => {
+    navigation.navigate("salesorder", { update: true, order: order });
+  };
+
+  const filteredOrders = useMemo(() => {
+    return orders.filter((order) =>
+      order.name.toLowerCase().includes(searchFilter.toLowerCase())
+    );
+  }, [orders, searchFilter]);
+
+  const renderOrder = useCallback(({ item }) => {
+    return (
+      <View style={styles.listcontainer}>
+        <Text
+          variant="titleMedium"
+          style={{ fontWeight: "600", paddingBottom: 10, width: "60%" }}
+        >
+          {item.name}
+        </Text>
+        <View style={styles.leftitems}>
+          <Text variant="titleSmall">{formatDate(item.orderdate)}</Text>
+          <Text variant="titleSmall"> Status: {item.orderstatus}</Text>
+        </View>
+        <View style={styles.rightitems}>
+          <Text style={{ paddingTop: 10 }}>
+            Amt : {`\u20B9`} {item.totalamount}
+          </Text>
+          <TouchableOpacity style={{ display: "flex", alignItems: "flex-end" }}>
+            <AntDesign
+              onPress={() => redirectToUpdate(item)}
+              name="edit"
+              size={35}
+              style={{ paddingTop: 10, paddingRight: 10 }}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  });
 
   return (
     <>
       <View style={styles.container}>
         <View style={styles.pagecontainer}>
-          
-
           <View
             style={{
               display: "flex",
@@ -75,35 +123,19 @@ export default function Orders({ route, navigation }) {
             </View>
           </View>
 
-          <TextInput style={styles.input} placeholder="Search Retailers" />
-
+          <TextInput
+            style={styles.input}
+            value={searchFilter}
+            onChangeText={(text) => setSearchFilter(text)}
+            placeholder="Search Retailers"
+          />
 
           <View
             style={{ width: "100%", borderBottomWidth: 1, marginTop: 10 }}
           ></View>
         </View>
       </View>
-      <FlatList
-        data={data}
-        renderItem={({ item }) => {
-          return (
-            <View style={styles.listcontainer}>
-              <Text style={{ fontWeight: "600", paddingBottom: 10 }}>
-                {item.name}
-              </Text>
-              <Text style={{ fontWeight: "400" }}>
-                26 Oct Status : Delivered
-              </Text>
-              <View style={styles.rightitems}>
-                <Text style={{ paddingTop: 10 }}>Amt : Rs.100</Text>
-                <TouchableOpacity>
-                  <AntDesign name="edit" size={25} style={{ paddingTop: 10 }} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          );
-        }}
-      />
+      <FlatList data={filteredOrders} renderItem={renderOrder} />
     </>
   );
 }
@@ -130,7 +162,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     marginBottom: "5%",
-    marginTop:"3%"
+    marginTop: "3%",
+  },
+  leftitems: {
+    width: "60%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   rightitems: {
     position: "absolute",
@@ -145,8 +183,8 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: "3%",
     position: "relative",
-    borderColor:"silver",
-    borderWidth:1
+    borderColor: "silver",
+    borderWidth: 1,
   },
   locationcontainer: {
     display: "flex",
