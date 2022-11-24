@@ -5,7 +5,7 @@ function CityFilter({ cities, setCity }) {
   return (
     <SelectList
       setSelected={(val) => setCity(val.toLowerCase())}
-      placeholder="Select City"
+      placeholder="Select"
       data={cities}
       save="value"
     />

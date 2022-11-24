@@ -69,10 +69,10 @@ export default function LandingScreen({ navigation }) {
           </Text>
           <TextInput
             style={styles.input}
-            placeholder="Search retailers"
+            placeholder="Search Customers"
             onChangeText={(text) => setFilterText(text.toLowerCase())}
           />
-          <CityFilter cities={cities} setCity={setCity} />
+         {/* <CityFilter cities={cities} setCity={setCity} /> */}
           <HelperText type="error" visible={errors.retailers}>
             {errors.retailers}{" "}
           </HelperText>

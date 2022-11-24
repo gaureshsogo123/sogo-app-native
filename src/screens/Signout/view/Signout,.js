@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View,Text } from 'react-native'
 
-const Signout = () => {
+
+
+const Signout = ({navigation}) => {
+
+  
   return (
     <View>
-        <Text>Signout</Text>
+        <Text>Sign oput</Text>
     </View>
   )
 }

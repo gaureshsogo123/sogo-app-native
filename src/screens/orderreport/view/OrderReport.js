@@ -59,12 +59,12 @@ export default function OrderReport({ route, navigation }) {
             </View>
           </View>
 
-          <View
+          { /*  <View
             style={{
               alignItems: "center",
             }}
           >
-            <View style={styles.newlocationcontainer}>
+          <View style={styles.newlocationcontainer}>
               <Text style={{ fontWeight: "600", fontSize: 15 }}>
                 Location :
               </Text>
@@ -72,7 +72,7 @@ export default function OrderReport({ route, navigation }) {
                 {<CitySmallFilter />}
               </View>
             </View>
-          </View>
+          </View>*/}
 
           <TextInput style={styles.input} placeholder="Search Retailers" />
 

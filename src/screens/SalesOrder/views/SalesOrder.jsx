@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { Alert, FlatList, StyleSheet, View } from "react-native";
 import { Button, HelperText, useTheme } from "react-native-paper";
 import { TextInput, Text } from "react-native-paper";
 import { useAuthContext } from "../../../contexts/authContext";
@@ -65,7 +65,7 @@ function SalesOrder({ route, navigation }) {
         price.discount,
         retailerId
       );
-      if (!result.error) navigation.navigate("book");
+      if (!result.error)navigation.navigate("My Orders")        
       else setErrors({ ...errors, saveOrder: result.error });
     } catch (error) {
       setErrors({ ...errors, saveOrder: "Failed to save order" });
@@ -138,7 +138,7 @@ function SalesOrder({ route, navigation }) {
             Price: {item.price}{" "}
           </Text>
           <Text variant="titleSmall">
-            Total: {(item.price - item.discount) * item.quantity}{" "}
+            Amount: {(item.price - item.discount) * item.quantity}{" "}
           </Text>
         </View>
         <View style={styles.unitSection}>
@@ -167,17 +167,17 @@ function SalesOrder({ route, navigation }) {
     <>
       <View style={styles.heading}>
         <Text style={{ marginBottom: 5 }} variant="titleLarge">
-          Outlet: {retailerName}
+         <Text style={{color:"gray"}}>Outlet:</Text> {retailerName}
         </Text>
         <Text style={{ marginBottom: 5 }} variant="titleMedium">
-          Total Price: {`\u20B9`} {parseFloat(price.total).toFixed(2)}
+          Total Amount : {`\u20B9`} {parseFloat(price.total).toFixed(2)}
         </Text>
       </View>
 
       <TextInput
         value={searchFilter}
         mode="flat"
-        placeholder="Search products"
+        placeholder="Search Products"
         onChangeText={(text) => setSearchFilter(text)}
       />
       <HelperText visible={errors.products} type="error">
