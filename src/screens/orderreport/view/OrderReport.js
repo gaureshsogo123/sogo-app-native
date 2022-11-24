@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-paper";
-import { AntDesign } from "@expo/vector-icons";
-import CityFilter from "../../../component/CityFilter";
 import DatePicker from "../../../component/DatePicker";
 import CitySmallFilter from "../../../component/CitySmallFilter";
-import StatusFilter from "../../../component/StatusFilter";
 import Table from "../../../component/Table";
 
+function oneMonthAgo() {
+  let date = new Date();
+  if (date.getMonth === 0) {
+    date.setMonth(11);
+    date.setFullYear(date.getFullYear() - 1);
+  } else date.setMonth(date.getMonth() - 1);
+  return date;
+}
 export default function OrderReport({ route, navigation }) {
+  const [startDate, setStartDate] = useState(oneMonthAgo());
+  const [endDate, setEndDate] = useState(new Date());
   const data = [
     { inm: "dosa batterr", Qty: 20, price: 200 },
     { inm: "Chapati", Qty: 30, price: 300 },
@@ -37,14 +37,24 @@ export default function OrderReport({ route, navigation }) {
             <View style={styles.locationcontainer}>
               <Text style={{ fontWeight: "600", fontSize: 15 }}>From :</Text>
               <View>
-                <DatePicker />
+                <DatePicker
+                  date={startDate}
+                  setDate={setStartDate}
+                  text={"From"}
+                  showFlag={true}
+                />
               </View>
             </View>
 
             <View style={styles.locationcontainer}>
               <Text style={{ fontWeight: "600", fontSize: 15 }}>To :</Text>
               <View>
-                <DatePicker />
+                <DatePicker
+                  date={endDate}
+                  setDate={setEndDate}
+                  text={"To"}
+                  showFlag={true}
+                />
               </View>
             </View>
           </View>
@@ -75,10 +85,8 @@ export default function OrderReport({ route, navigation }) {
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.pagecontainer}>
-
-            <Table/>
-
-            </View>
+            <Table />
+          </View>
         </View>
       </ScrollView>
     </>
