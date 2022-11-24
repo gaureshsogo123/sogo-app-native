@@ -1,22 +1,13 @@
-import React, { useState } from "react";
-import { View, Text } from "react-native";
+import React from "react";
+import { View } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
-import { City } from "../CustomerPracticeApi";
 
-function StatusFilter() {
-  const status = [
-    { key: "1", value: "Delivered" },
-    { key: "2", value: "Placed" },
-  ];
-
-  const [selected, setSelected] = useState("");
-  const [val, setVal] = useState(status);
-
+function StatusFilter({ options, setValue }) {
   return (
     <View>
       <SelectList
-        setSelected={(val) => setSelected(val)}
-        data={val}
+        setSelected={(val) => setValue(val)}
+        data={options}
         save="value"
         boxStyles={{ borderWidth: 0, borderBottomWidth: 1 }}
       />

@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
-import { TextInput, Text } from "react-native-paper";
+import { TextInput, Text, Button } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
 import DatePicker from "../../../component/DatePicker";
 import CitySmallFilter from "../../../component/CitySmallFilter";
 import StatusFilter from "../../../component/StatusFilter";
 import { useAuthContext } from "../../../contexts/authContext";
 import { getOrders } from "../helpers/ordersHelper";
+import statuses from "../../../constants/statusOptions";
 
 function formatDate(string) {
   const date = new Date(string);
@@ -15,9 +16,22 @@ function formatDate(string) {
   }-${date.getFullYear()}`;
 }
 
+function oneMonthAgo() {
+  let date = new Date();
+  if (date.getMonth === 0) {
+    date.setMonth(11);
+    date.setFullYear(date.getFullYear() - 1);
+  } else date.setMonth(date.getMonth() - 1);
+  return date;
+}
+
 export default function Orders({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [searchFilter, setSearchFilter] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [startDate, setStartDate] = useState(oneMonthAgo());
+  const [endDate, setEndDate] = useState(new Date());
+  const [status, setStatus] = useState("");
   const [errors, setErrors] = useState({});
   const { user } = useAuthContext();
 
@@ -40,10 +54,16 @@ export default function Orders({ navigation }) {
   };
 
   const filteredOrders = useMemo(() => {
-    return orders.filter((order) =>
-      order.name.toLowerCase().includes(searchFilter.toLowerCase())
+    return orders.filter(
+      (order) =>
+        order.name.toLowerCase().includes(searchFilter.toLowerCase()) &&
+        (status === "All" ||
+          status === "" ||
+          order.orderstatus.toLowerCase() === status.toLowerCase()) &&
+        new Date(order.orderdate) >= startDate &&
+        new Date(order.orderdate) <= endDate
     );
-  }, [orders, searchFilter]);
+  }, [orders, searchFilter, startDate, endDate, status]);
 
   const renderOrder = useCallback(({ item }) => {
     return (
@@ -79,60 +99,74 @@ export default function Orders({ navigation }) {
     <>
       <View style={styles.container}>
         <View style={styles.pagecontainer}>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-evenly",
-              marginBottom: "4%",
-            }}
-          >
-            <View style={styles.locationcontainer}>
-              <Text style={{ fontWeight: "600", fontSize: 15 }}>From :</Text>
-              <View>
-                <DatePicker />
-              </View>
-            </View>
-
-            <View style={styles.locationcontainer}>
-              <Text style={{ fontWeight: "600", fontSize: 15 }}>To :</Text>
-              <View>
-                <DatePicker />
-              </View>
-            </View>
-          </View>
-
-          <View
-            style={{
-              alignItems: "center",
-            }}
-          >
-            <View style={styles.newlocationcontainer}>
-              <Text style={{ fontWeight: "600", fontSize: 15 }}>
-                Location :
-              </Text>
-              <View style={{ marginTop: -10, marginBottom: 5 }}>
-                {<CitySmallFilter />}
-              </View>
-            </View>
-            <View style={styles.locationcontainer}>
-              <Text style={{ fontWeight: "600", fontSize: 15 }}>Status :</Text>
-              <View style={{ marginTop: -10, marginBottom: 5 }}>
-                {<StatusFilter />}
-              </View>
-            </View>
-          </View>
-
           <TextInput
             style={styles.input}
             value={searchFilter}
             onChangeText={(text) => setSearchFilter(text)}
             placeholder="Search Retailers"
           />
+          {showFilters && (
+            <>
+              <View style={styles.datecontainer}>
+                <Text
+                  variant="titleMedium"
+                  style={{ textAlignVertical: "center" }}
+                >
+                  From:{" "}
+                </Text>
+                <DatePicker
+                  date={startDate}
+                  setDate={setStartDate}
+                  text={"From"}
+                  showFlag={true}
+                />
+                <Text
+                  variant="titleMedium"
+                  style={{ textAlignVertical: "center" }}
+                >
+                  To:{" "}
+                </Text>
+                <DatePicker
+                  date={endDate}
+                  setDate={setEndDate}
+                  text={"To"}
+                  showFlag={true}
+                />
+              </View>
 
-          <View
-            style={{ width: "100%", borderBottomWidth: 1, marginTop: 10 }}
-          ></View>
+              <View>
+                <View style={styles.newlocationcontainer}>
+                  {/* <Text
+                    variant="titleMedium"
+                    style={{ textAlignVertical: "center" }}
+                  >
+                    Location :
+                  </Text>
+                  <View style={{ marginTop: -10, marginBottom: 5 }}>
+                    {<CitySmallFilter />}
+                  </View> */}
+                </View>
+                <View style={styles.locationcontainer}>
+                  <Text
+                    variant="titleMedium"
+                    style={{ textAlignVertical: "center" }}
+                  >
+                    Status :
+                  </Text>
+                  <View style={{ marginTop: -10, marginBottom: 5 }}>
+                    <StatusFilter options={statuses} setValue={setStatus} />
+                  </View>
+                </View>
+              </View>
+            </>
+          )}
+          <Button
+            mode="contained"
+            onPress={() => setShowFilters(!showFilters)}
+            style={{ borderRadius: 3 }}
+          >
+            {showFilters ? "HIDE FILTERS" : "SHOW FILTERS"}{" "}
+          </Button>
         </View>
       </View>
       <FlatList data={filteredOrders} renderItem={renderOrder} />
@@ -147,22 +181,19 @@ const styles = StyleSheet.create({
     padding: 10,
     width: "100%",
   },
-  list: {
-    width: "100%",
-    padding: 10,
-    borderBottomColor: "black",
-    borderBottomWidth: 1,
-    marginBottom: 10,
-  },
   pagecontainer: {
     width: "100%",
-    padding: 10,
   },
   input: {
     width: "100%",
     height: 50,
-    marginBottom: "5%",
-    marginTop: "3%",
+    marginBottom: 5,
+  },
+  datecontainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 5,
   },
   leftitems: {
     width: "60%",
