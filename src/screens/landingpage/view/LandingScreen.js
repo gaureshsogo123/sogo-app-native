@@ -84,7 +84,7 @@ export default function LandingScreen({ navigation }) {
           </Text>
           <TextInput
             style={styles.input}
-            placeholder="Search retailers"
+            placeholder="Search Customers"
             onChangeText={(text) => setFilterText(text.toLowerCase())}
           />
           {/* <CityFilter cities={cities} setCity={setCity} /> */}
@@ -101,7 +101,10 @@ export default function LandingScreen({ navigation }) {
         data={filteredRetailers}
         renderItem={renderRetailer}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={getStores} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => getStores()}
+          />
         }
       />
     </>

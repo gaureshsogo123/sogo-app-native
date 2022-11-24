@@ -33,7 +33,7 @@ export default function BottomNav() {
         }}
       />
       <Tab.Screen
-        name="orderReport"
+        name="Order Report"
         component={OrderReport}
         options={{
           tabBarIcon: (props) => (

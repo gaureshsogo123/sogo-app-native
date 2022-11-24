@@ -6,7 +6,7 @@ import {
   View,
   RefreshControl,
 } from "react-native";
-import { TextInput, Text, Button } from "react-native-paper";
+import { TextInput, Text, Button, HelperText } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
 import DatePicker from "../../../component/DatePicker";
 import CitySmallFilter from "../../../component/CitySmallFilter";
@@ -52,8 +52,10 @@ export default function Orders({ navigation }) {
     setRefreshing(true);
     try {
       const result = await getOrders(user.userId);
-      if (result.data) setOrders(result.data);
-      else setErrors({ ...errors, getOrders: "Failed to fetch orders" });
+      if (result.data) {
+        setOrders(result.data);
+        setEndDate(new Date());
+      } else setErrors({ ...errors, getOrders: "Failed to fetch orders" });
     } catch (error) {
       setErrors({ ...errors, getOrders: "Failed to fetch orders" });
     } finally {
@@ -172,6 +174,11 @@ export default function Orders({ navigation }) {
               </View>
             </>
           )}
+          {errors.getOrders && (
+            <HelperText visible={errors.getOrders} type="error">
+              {errors.getOrders}{" "}
+            </HelperText>
+          )}
           <Button
             mode="contained"
             onPress={() => setShowFilters(!showFilters)}
@@ -185,7 +192,10 @@ export default function Orders({ navigation }) {
         data={filteredOrders}
         renderItem={renderOrder}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => fetchOrders()}
+          />
         }
       />
     </>

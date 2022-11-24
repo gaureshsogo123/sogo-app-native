@@ -26,8 +26,6 @@ const styles = StyleSheet.create({
   textInput: {
     height: 50,
     width: 300,
-    padding: 0,
-    fontSize: 20,
   },
   resend: {
     textAlign: "left",
@@ -35,6 +33,11 @@ const styles = StyleSheet.create({
   button: {
     width: 300,
     borderRadius: 5,
+  },
+  head: {
+    fontFamily: "serif",
+    fontWeight: "500",
+    fontSize: 35,
   },
 });
 
@@ -91,7 +94,10 @@ function SignIn() {
   return (
     <>
       <View style={styles.sogoBg}>
-        <Text variant="displayMedium"> SOGO</Text>
+        <Text variant="displayMedium" style={styles.head}>
+          {" "}
+          SOGO
+        </Text>
       </View>
       <View
         style={{
@@ -104,7 +110,7 @@ function SignIn() {
             <TextInput
               style={styles.textInput}
               mode="outlined"
-              label={"Phone number"}
+              label={"Phone Number"}
               keyboardType={"numeric"}
               value={mobileNumber}
               onChangeText={(e) => {
