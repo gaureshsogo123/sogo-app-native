@@ -16,23 +16,23 @@ export default function BottomNav() {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name={"Home"}
+        name="Home"
         component={LandingScreen}
         options={{
           tabBarIcon: () => <BottomIconContainer name="home" />,
-          title: user?.userName || "Home",
+          title: user?.userName || "Home"
         }}
       />
     
       <Tab.Screen
-        name="book"
+        name="My Orders"
         component={Orders}
         options={{
           tabBarIcon: () => <BottomIconContainer name="book" />,
         }}
       />
       <Tab.Screen
-        name="orderReport"
+        name="Order Report"
         component={OrderReport}
         options={{
           tabBarIcon:()=><BottomIconContainer name="filetext1"/>
