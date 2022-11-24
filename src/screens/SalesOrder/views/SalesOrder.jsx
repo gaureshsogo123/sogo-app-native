@@ -58,14 +58,14 @@ function SalesOrder({ route, navigation }) {
       const result = await saveOrder(
         user.userId,
         orderProducts.length,
-        price.total,
-        "cash",
         price.finalPrice,
+        "cash",
+        price.total,
         orderProducts,
         price.discount,
         retailerId
       );
-      if (!result.error) navigation.navigate("book");
+      if (!result.error) navigation.navigate("Orders");
       else setErrors({ ...errors, saveOrder: result.error });
     } catch (error) {
       setErrors({ ...errors, saveOrder: "Failed to save order" });
@@ -180,24 +180,17 @@ function SalesOrder({ route, navigation }) {
         placeholder="Search products"
         onChangeText={(text) => setSearchFilter(text)}
       />
-      <HelperText visible={errors.products} type="error">
-        {errors.products}{" "}
-      </HelperText>
-      <HelperText visible={errors.saveOrder} type="error">
-        {errors.saveOrder}{" "}
-      </HelperText>
-      {!products.length ? (
-        <Text style={{ textAlign: "center" }} variant="titleLarge">
-          There are no products!{" "}
-        </Text>
-      ) : (
-        <FlatList
-          removeClippedSubviews={false}
-          keyExtractor={productKeyExtractor}
-          data={filteredProducts}
-          renderItem={renderProduct}
-        />
+      {errors.products && (
+        <HelperText visible={errors.products} type="error">
+          {errors.products}{" "}
+        </HelperText>
       )}
+      <FlatList
+        removeClippedSubviews={false}
+        keyExtractor={productKeyExtractor}
+        data={filteredProducts}
+        renderItem={renderProduct}
+      />
 
       <Button onPress={placeOrder} mode="contained" style={styles.orderButton}>
         Place Order

@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-    flex: 1,
+    display: "flex",
+    height: "60%",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -37,18 +38,14 @@ const styles = StyleSheet.create({
   },
 });
 
-function SignIn({ navigation }) {
+function SignIn() {
   const theme = useTheme();
   const [mobileNumber, setMobileNumber] = useState();
   const [otp, setOtp] = useState();
   const [errors, setErrors] = useState({});
   const [otpGenerated, setOtpGenerated] = useState(false);
 
-  const { loginUser, isLoggedIn } = useAuthContext();
-
-  useEffect(() => {
-    if (isLoggedIn()) navigation.navigate("Home");
-  }, []);
+  const { loginUser } = useAuthContext();
 
   const validateMobile = () => {
     const regex = new RegExp(/^\d{10}$/);
@@ -85,7 +82,6 @@ function SignIn({ navigation }) {
           if (!res.error) {
             loginUser(res.data);
             resetInputs();
-            navigation.navigate("Home");
           }
         })
         .catch((err) => setErrors({ ...errors, otp: err.message }));
@@ -183,6 +179,9 @@ function SignIn({ navigation }) {
           </>
         )}
       </View>
+      <View
+        style={{ backgroundColor: theme.colors.background, height: "100%" }}
+      ></View>
     </>
   );
 }

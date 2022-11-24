@@ -35,7 +35,7 @@ export default function LandingScreen({ navigation }) {
   }, [user?.userId]);
 
   const handlePress = (item) => {
-    navigation.navigate(`salesorder`, {
+    navigation.push(`SalesOrder`, {
       retailerName: item.name,
       retailerId: item.userid,
     });
@@ -60,6 +60,9 @@ export default function LandingScreen({ navigation }) {
       </TouchableOpacity>
     );
   }, []);
+
+  const retailerKeyExtractor = (item) => item.userid;
+
   return (
     <>
       <View style={styles.container}>
@@ -72,14 +75,20 @@ export default function LandingScreen({ navigation }) {
             placeholder="Search retailers"
             onChangeText={(text) => setFilterText(text.toLowerCase())}
           />
-          <CityFilter cities={cities} setCity={setCity} />
-          <HelperText type="error" visible={errors.retailers}>
-            {errors.retailers}{" "}
-          </HelperText>
+          {/* <CityFilter cities={cities} setCity={setCity} /> */}
+          {errors.retailers && (
+            <HelperText type="error" visible={errors.retailers}>
+              {errors.retailers}{" "}
+            </HelperText>
+          )}
         </View>
       </View>
 
-      <FlatList data={filteredRetailers} renderItem={renderRetailer} />
+      <FlatList
+        keyExtractor={retailerKeyExtractor}
+        data={filteredRetailers}
+        renderItem={renderRetailer}
+      />
     </>
   );
 }
