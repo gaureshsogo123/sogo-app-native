@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View, RefreshControl } from "react-native";
 import { Button, HelperText, useTheme } from "react-native-paper";
 import { TextInput, Text } from "react-native-paper";
 import { useAuthContext } from "../../../contexts/authContext";
@@ -45,6 +45,7 @@ function SalesOrder({ route, navigation }) {
   const { user } = useAuthContext();
 
   const { retailerId, retailerName } = route.params;
+  const [refreshing, setRefreshing] = useState(true);
   const [products, setProducts] = useState([]);
   const [errors, setErrors] = useState({});
   const [price, setPrice] = useState({ total: 0, discount: 0, finalPrice: 0 });
@@ -75,29 +76,32 @@ function SalesOrder({ route, navigation }) {
   useEffect(() => {
     if (!user) return;
     setErrors({ ...errors, products: "" });
-    const getProducts = async () => {
-      try {
-        const products = await fetchProducts(user.userId, 0, "ALL");
-        if (products.data.length === 0)
-          setErrors({
-            ...errors,
-            products: "You do not have any products yet",
-          });
-        else {
-          products.data = products.data.map((product) => ({
-            ...product,
-            quantity: product.quantity || 0,
-            discount: product.discount || 0,
-          }));
-          setProducts(products.data);
-        }
-      } catch (err) {
-        setErrors({ ...errors, products: "Failed to get products" });
-      }
-    };
     getProducts();
   }, [user?.userId]);
 
+  const getProducts = async () => {
+    setRefreshing(true);
+    try {
+      const products = await fetchProducts(user.userId, 0, "ALL");
+      if (products.data.length === 0)
+        setErrors({
+          ...errors,
+          products: "You do not have any products yet",
+        });
+      else {
+        products.data = products.data.map((product) => ({
+          ...product,
+          quantity: product.quantity || 0,
+          discount: product.discount || 0,
+        }));
+        setProducts(products.data);
+      }
+    } catch (err) {
+      setErrors({ ...errors, products: "Failed to get products" });
+    } finally {
+      setRefreshing(false);
+    }
+  };
   useEffect(() => {
     calculateTotal();
   }, [products]);
@@ -190,6 +194,9 @@ function SalesOrder({ route, navigation }) {
         keyExtractor={productKeyExtractor}
         data={filteredProducts}
         renderItem={renderProduct}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={getProducts} />
+        }
       />
 
       <Button onPress={placeOrder} mode="contained" style={styles.orderButton}>

@@ -1,11 +1,18 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  RefreshControl,
+} from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
-import CityFilter from "../../../component/CityFilter";
+//import CityFilter from "../../../component/CityFilter";
 import { useAuthContext } from "../../../contexts/authContext";
 import { getRetailers } from "../helpers/landingPageHelper";
 
 export default function LandingScreen({ navigation }) {
+  const [refreshing, setRefreshing] = useState(true);
   const [retailers, setRetailers] = useState([]);
   const [city, setCity] = useState("");
   const [errors, setErrors] = useState({});
@@ -21,18 +28,23 @@ export default function LandingScreen({ navigation }) {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    const getStores = async () => {
-      if (!user) return;
-      getRetailers(user.userId)
-        .then((data) => {
-          setRetailers(data);
-        })
-        .catch(() =>
-          setErrors({ ...errors, retailers: "Couldn't get retailers" })
-        );
-    };
     getStores();
   }, [user?.userId]);
+
+  const getStores = async () => {
+    if (!user) return;
+    setRefreshing(true);
+    getRetailers(user.userId)
+      .then((data) => {
+        setRetailers(data);
+      })
+      .catch(() =>
+        setErrors({ ...errors, retailers: "Couldn't get retailers" })
+      )
+      .finally(() => {
+        setRefreshing(false);
+      });
+  };
 
   const handlePress = (item) => {
     navigation.push(`SalesOrder`, {
@@ -88,6 +100,9 @@ export default function LandingScreen({ navigation }) {
         keyExtractor={retailerKeyExtractor}
         data={filteredRetailers}
         renderItem={renderRetailer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={getStores} />
+        }
       />
     </>
   );

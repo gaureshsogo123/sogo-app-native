@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  RefreshControl,
+} from "react-native";
 import { TextInput, Text, Button } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
 import DatePicker from "../../../component/DatePicker";
@@ -26,6 +32,7 @@ function oneMonthAgo() {
 }
 
 export default function Orders({ navigation }) {
+  const [refreshing, setRefreshing] = useState(true);
   const [orders, setOrders] = useState([]);
   const [searchFilter, setSearchFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -37,17 +44,22 @@ export default function Orders({ navigation }) {
 
   useEffect(() => {
     if (!user) return;
-    const fetchOrders = async () => {
-      try {
-        const result = await getOrders(user.userId);
-        if (result.data) setOrders(result.data);
-        else setErrors({ ...errors, getOrders: "Failed to fetch orders" });
-      } catch (error) {
-        setErrors({ ...errors, getOrders: "Failed to fetch orders" });
-      }
-    };
+
     fetchOrders();
   }, [user?.userId]);
+
+  const fetchOrders = async () => {
+    setRefreshing(true);
+    try {
+      const result = await getOrders(user.userId);
+      if (result.data) setOrders(result.data);
+      else setErrors({ ...errors, getOrders: "Failed to fetch orders" });
+    } catch (error) {
+      setErrors({ ...errors, getOrders: "Failed to fetch orders" });
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const redirectToUpdate = (order) => {
     navigation.navigate("salesorder", { update: true, order: order });
@@ -169,7 +181,13 @@ export default function Orders({ navigation }) {
           </Button>
         </View>
       </View>
-      <FlatList data={filteredOrders} renderItem={renderOrder} />
+      <FlatList
+        data={filteredOrders}
+        renderItem={renderOrder}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />
+        }
+      />
     </>
   );
 }
