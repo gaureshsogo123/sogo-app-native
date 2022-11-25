@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   },
   listcontainer: {
     width: "95%",
-    height: 100,
+    minHeight:100,
     backgroundColor: "#fafafa",
     borderRadius: 10,
     marginLeft: "3%",
