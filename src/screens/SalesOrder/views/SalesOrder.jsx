@@ -76,6 +76,7 @@ function SalesOrder({ route, navigation }) {
         Alert.alert("Success", "Your order has been successfully placed!");
         navigation.navigate("Orders");
       } else setErrors({ ...errors, saveOrder: result.error });
+
     } catch (error) {
       setErrors({ ...errors, saveOrder: "Failed to save order" });
     }

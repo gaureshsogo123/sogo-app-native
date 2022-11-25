@@ -21,6 +21,7 @@ export default function BottomNav() {
           tabBarIcon: (props) => <BottomIconContainer name="home" {...props} />,
           headerShown: false,
           ...defaultTabOptions,
+
         }}
       />
       <Tab.Screen
