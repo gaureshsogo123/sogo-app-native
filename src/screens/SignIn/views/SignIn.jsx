@@ -18,15 +18,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-    flex: 1,
+    display: "flex",
+    height: "60%",
     justifyContent: "center",
     alignItems: "center",
   },
   textInput: {
     height: 50,
     width: 300,
-    padding: 0,
-    fontSize: 15,
   },
   resend: {
     textAlign: "left",
@@ -35,25 +34,21 @@ const styles = StyleSheet.create({
     width: 300,
     borderRadius: 5,
   },
-  head:{
-    fontFamily:"serif",
-    fontWeight:"500",
-    fontSize:35
-  }
+  head: {
+    fontFamily: "serif",
+    fontWeight: "500",
+    fontSize: 35,
+  },
 });
 
-function SignIn({ navigation }) {
+function SignIn() {
   const theme = useTheme();
   const [mobileNumber, setMobileNumber] = useState();
   const [otp, setOtp] = useState();
   const [errors, setErrors] = useState({});
   const [otpGenerated, setOtpGenerated] = useState(false);
 
-  const { loginUser, isLoggedIn } = useAuthContext();
-
-  useEffect(() => {
-    if (isLoggedIn()) navigation.navigate("Home");
-  }, []);
+  const { loginUser } = useAuthContext();
 
   const validateMobile = () => {
     const regex = new RegExp(/^\d{10}$/);
@@ -90,7 +85,6 @@ function SignIn({ navigation }) {
           if (!res.error) {
             loginUser(res.data);
             resetInputs();
-            navigation.navigate("Home");
           }
         })
         .catch((err) => setErrors({ ...errors, otp: err.message }));
@@ -100,7 +94,10 @@ function SignIn({ navigation }) {
   return (
     <>
       <View style={styles.sogoBg}>
-        <Text variant="displayMedium" style={styles.head}> SOGO</Text>
+        <Text variant="displayMedium" style={styles.head}>
+          {" "}
+          SOGO
+        </Text>
       </View>
       <View
         style={{
@@ -188,6 +185,9 @@ function SignIn({ navigation }) {
           </>
         )}
       </View>
+      <View
+        style={{ backgroundColor: theme.colors.background, height: "100%" }}
+      ></View>
     </>
   );
 }

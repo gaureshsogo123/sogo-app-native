@@ -18,7 +18,7 @@ const AuthContextProvider = ({ children }) => {
   }, []);
 
   const isLoggedIn = () => {
-    return user.userId ? true : false;
+    return user?.userId ? true : false;
   };
 
   const loginUser = (data) => {

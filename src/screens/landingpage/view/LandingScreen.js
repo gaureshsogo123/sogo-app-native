@@ -1,11 +1,18 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  RefreshControl,
+} from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
-import CityFilter from "../../../component/CityFilter";
+//import CityFilter from "../../../component/CityFilter";
 import { useAuthContext } from "../../../contexts/authContext";
 import { getRetailers } from "../helpers/landingPageHelper";
 
 export default function LandingScreen({ navigation }) {
+  const [refreshing, setRefreshing] = useState(true);
   const [retailers, setRetailers] = useState([]);
   const [city, setCity] = useState("");
   const [errors, setErrors] = useState({});
@@ -21,21 +28,26 @@ export default function LandingScreen({ navigation }) {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    const getStores = async () => {
-      if (!user) return;
-      getRetailers(user.userId)
-        .then((data) => {
-          setRetailers(data);
-        })
-        .catch(() =>
-          setErrors({ ...errors, retailers: "Couldn't get retailers" })
-        );
-    };
     getStores();
   }, [user?.userId]);
 
+  const getStores = async () => {
+    if (!user) return;
+    setRefreshing(true);
+    getRetailers(user.userId)
+      .then((data) => {
+        setRetailers(data);
+      })
+      .catch(() =>
+        setErrors({ ...errors, retailers: "Couldn't get retailers" })
+      )
+      .finally(() => {
+        setRefreshing(false);
+      });
+  };
+
   const handlePress = (item) => {
-    navigation.navigate(`salesorder`, {
+    navigation.push(`SalesOrder`, {
       retailerName: item.name,
       retailerId: item.userid,
     });
@@ -60,6 +72,9 @@ export default function LandingScreen({ navigation }) {
       </TouchableOpacity>
     );
   }, []);
+
+  const retailerKeyExtractor = (item) => item.userid;
+
   return (
     <>
       <View style={styles.container}>
@@ -72,14 +87,26 @@ export default function LandingScreen({ navigation }) {
             placeholder="Search Customers"
             onChangeText={(text) => setFilterText(text.toLowerCase())}
           />
-         {/* <CityFilter cities={cities} setCity={setCity} /> */}
-          <HelperText type="error" visible={errors.retailers}>
-            {errors.retailers}{" "}
-          </HelperText>
+          {/* <CityFilter cities={cities} setCity={setCity} /> */}
+          {errors.retailers && (
+            <HelperText type="error" visible={errors.retailers}>
+              {errors.retailers}{" "}
+            </HelperText>
+          )}
         </View>
       </View>
 
-      <FlatList data={filteredRetailers} renderItem={renderRetailer} />
+      <FlatList
+        keyExtractor={retailerKeyExtractor}
+        data={filteredRetailers}
+        renderItem={renderRetailer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => getStores()}
+          />
+        }
+      />
     </>
   );
 }

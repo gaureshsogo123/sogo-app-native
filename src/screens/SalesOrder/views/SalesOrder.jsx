@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, FlatList, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  View,
+  RefreshControl,
+} from "react-native";
 import { Button, HelperText, useTheme } from "react-native-paper";
 import { TextInput, Text } from "react-native-paper";
 import { useAuthContext } from "../../../contexts/authContext";
@@ -45,6 +51,7 @@ function SalesOrder({ route, navigation }) {
   const { user } = useAuthContext();
 
   const { retailerId, retailerName } = route.params;
+  const [refreshing, setRefreshing] = useState(true);
   const [products, setProducts] = useState([]);
   const [errors, setErrors] = useState({});
   const [price, setPrice] = useState({ total: 0, discount: 0, finalPrice: 0 });
@@ -58,15 +65,18 @@ function SalesOrder({ route, navigation }) {
       const result = await saveOrder(
         user.userId,
         orderProducts.length,
-        price.total,
-        "cash",
         price.finalPrice,
+        "cash",
+        price.total,
         orderProducts,
         price.discount,
         retailerId
       );
-      if (!result.error)navigation.navigate("My Orders")        
-      else setErrors({ ...errors, saveOrder: result.error });
+      if (!result.error) {
+        Alert.alert("Success", "Your order has been successfully placed!");
+        navigation.navigate("Orders");
+      } else setErrors({ ...errors, saveOrder: result.error });
+
     } catch (error) {
       setErrors({ ...errors, saveOrder: "Failed to save order" });
     }
@@ -75,29 +85,32 @@ function SalesOrder({ route, navigation }) {
   useEffect(() => {
     if (!user) return;
     setErrors({ ...errors, products: "" });
-    const getProducts = async () => {
-      try {
-        const products = await fetchProducts(user.userId, 0, "ALL");
-        if (products.data.length === 0)
-          setErrors({
-            ...errors,
-            products: "You do not have any products yet",
-          });
-        else {
-          products.data = products.data.map((product) => ({
-            ...product,
-            quantity: product.quantity || 0,
-            discount: product.discount || 0,
-          }));
-          setProducts(products.data);
-        }
-      } catch (err) {
-        setErrors({ ...errors, products: "Failed to get products" });
-      }
-    };
     getProducts();
   }, [user?.userId]);
 
+  const getProducts = async () => {
+    setRefreshing(true);
+    try {
+      const products = await fetchProducts(user.userId, 0, "ALL");
+      if (products.data.length === 0)
+        setErrors({
+          ...errors,
+          products: "You do not have any products yet",
+        });
+      else {
+        products.data = products.data.map((product) => ({
+          ...product,
+          quantity: product.quantity || 0,
+          discount: product.discount || 0,
+        }));
+        setProducts(products.data);
+      }
+    } catch (err) {
+      setErrors({ ...errors, products: "Failed to get products" });
+    } finally {
+      setRefreshing(false);
+    }
+  };
   useEffect(() => {
     calculateTotal();
   }, [products]);
@@ -167,7 +180,7 @@ function SalesOrder({ route, navigation }) {
     <>
       <View style={styles.heading}>
         <Text style={{ marginBottom: 5 }} variant="titleLarge">
-         <Text style={{color:"gray"}}>Outlet:</Text> {retailerName}
+          <Text style={{ color: "gray" }}>Outlet:</Text> {retailerName}
         </Text>
         <Text style={{ marginBottom: 5 }} variant="titleMedium">
           Total Amount : {`\u20B9`} {parseFloat(price.total).toFixed(2)}
@@ -180,24 +193,23 @@ function SalesOrder({ route, navigation }) {
         placeholder="Search Products"
         onChangeText={(text) => setSearchFilter(text)}
       />
-      <HelperText visible={errors.products} type="error">
-        {errors.products}{" "}
-      </HelperText>
-      <HelperText visible={errors.saveOrder} type="error">
-        {errors.saveOrder}{" "}
-      </HelperText>
-      {!products.length ? (
-        <Text style={{ textAlign: "center" }} variant="titleLarge">
-          There are no products!{" "}
-        </Text>
-      ) : (
-        <FlatList
-          removeClippedSubviews={false}
-          keyExtractor={productKeyExtractor}
-          data={filteredProducts}
-          renderItem={renderProduct}
-        />
+      {errors.products && (
+        <HelperText visible={errors.products} type="error">
+          {errors.products}{" "}
+        </HelperText>
       )}
+      <FlatList
+        removeClippedSubviews={false}
+        keyExtractor={productKeyExtractor}
+        data={filteredProducts}
+        renderItem={renderProduct}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => getProducts()}
+          />
+        }
+      />
 
       <Button onPress={placeOrder} mode="contained" style={styles.orderButton}>
         Place Order
