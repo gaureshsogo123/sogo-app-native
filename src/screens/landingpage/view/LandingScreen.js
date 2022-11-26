@@ -18,6 +18,7 @@ export default function LandingScreen({ navigation }) {
   const [errors, setErrors] = useState({});
   const [filterText, setFilterText] = useState("");
 
+
   const cities = [
     { key: "1", value: "Mumbai" },
     { key: "2", value: "Delhi" },
@@ -79,7 +80,7 @@ export default function LandingScreen({ navigation }) {
     <>
       <View style={styles.container}>
         <View style={styles.pagecontainer}>
-          <Text style={{ fontWeight: "700", fontSize: 18, paddingBottom: 3 }}>
+          <Text style={{ fontWeight: "700", fontSize: 18, paddingBottom: 3,marginLeft:"3%" }}>
             Select Customer
           </Text>
           <TextInput

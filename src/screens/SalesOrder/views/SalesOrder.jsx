@@ -148,10 +148,10 @@ function SalesOrder({ route, navigation }) {
         <View>
           <Text variant="titleMedium">{item.productname} </Text>
           <Text style={styles.price} variant="titleSmall">
-            Price: {item.price}{" "}
+            Price: Rs.{item.price}{" "}
           </Text>
           <Text variant="titleSmall">
-            Amount: {(item.price - item.discount) * item.quantity}{" "}
+            Amount: Rs.{(item.price - item.discount) * item.quantity}{" "}
           </Text>
         </View>
         <View style={styles.unitSection}>
@@ -180,10 +180,10 @@ function SalesOrder({ route, navigation }) {
     <>
       <View style={styles.heading}>
         <Text style={{ marginBottom: 5 }} variant="titleLarge">
-          <Text style={{ color: "gray" }}>Outlet:</Text> {retailerName}
+          <Text style={{ color: "gray",fontSize:18 }}>Outlet :</Text> {retailerName}
         </Text>
         <Text style={{ marginBottom: 5 }} variant="titleMedium">
-          Total Amount : {`\u20B9`} {parseFloat(price.total).toFixed(2)}
+         <Text style={{color:"gray",fontSize:18}}>Total Amount :</Text>  {`\u20B9`} {parseFloat(price.total).toFixed(2)}
         </Text>
       </View>
 

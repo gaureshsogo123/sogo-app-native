@@ -18,14 +18,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-    display: "flex",
-    height: "60%",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   textInput: {
-    height: 50,
+    height: 60,
     width: 300,
+    padding: 0,
+    fontSize: 15,
   },
   resend: {
     textAlign: "left",
@@ -34,21 +35,25 @@ const styles = StyleSheet.create({
     width: 300,
     borderRadius: 5,
   },
-  head: {
-    fontFamily: "serif",
-    fontWeight: "500",
-    fontSize: 35,
-  },
+  head:{
+    fontFamily:"serif",
+    fontWeight:"500",
+    fontSize:35
+  }
 });
 
-function SignIn() {
+function SignIn({ navigation }) {
   const theme = useTheme();
   const [mobileNumber, setMobileNumber] = useState();
   const [otp, setOtp] = useState();
   const [errors, setErrors] = useState({});
   const [otpGenerated, setOtpGenerated] = useState(false);
 
-  const { loginUser } = useAuthContext();
+  const { loginUser, isLoggedIn } = useAuthContext();
+
+  useEffect(() => {
+    if (isLoggedIn()) navigation.navigate("Home");
+  }, []);
 
   const validateMobile = () => {
     const regex = new RegExp(/^\d{10}$/);
@@ -85,6 +90,7 @@ function SignIn() {
           if (!res.error) {
             loginUser(res.data);
             resetInputs();
+            navigation.navigate("Home");
           }
         })
         .catch((err) => setErrors({ ...errors, otp: err.message }));
@@ -94,10 +100,7 @@ function SignIn() {
   return (
     <>
       <View style={styles.sogoBg}>
-        <Text variant="displayMedium" style={styles.head}>
-          {" "}
-          SOGO
-        </Text>
+        <Text variant="displayMedium" style={styles.head}> SOGO</Text>
       </View>
       <View
         style={{
@@ -110,7 +113,7 @@ function SignIn() {
             <TextInput
               style={styles.textInput}
               mode="outlined"
-              label={"Phone Number"}
+              label={<Text style={{backgroundColor:"white",color:"gray"}}>Phone Number</Text>}
               keyboardType={"numeric"}
               value={mobileNumber}
               onChangeText={(e) => {
@@ -152,7 +155,7 @@ function SignIn() {
                 style={styles.textInput}
                 keyboardType="numeric"
                 mode="outlined"
-                label={"Enter OTP"}
+                label={<Text style={{backgroundColor:"white",color:"gray"}}>Enter OTP</Text>}
                 value={otp}
                 secureTextEntry={true}
                 onChangeText={(e) => {
@@ -185,9 +188,6 @@ function SignIn() {
           </>
         )}
       </View>
-      <View
-        style={{ backgroundColor: theme.colors.background, height: "100%" }}
-      ></View>
     </>
   );
 }

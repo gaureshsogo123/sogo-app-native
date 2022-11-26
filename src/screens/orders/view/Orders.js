@@ -14,6 +14,8 @@ import StatusFilter from "../../../component/StatusFilter";
 import { useAuthContext } from "../../../contexts/authContext";
 import { getOrders } from "../helpers/ordersHelper";
 import statuses from "../../../constants/statusOptions";
+import Newstatus from "../../../component/Newstatus";
+import { Modal, Portal, Provider } from "react-native-paper";
 
 function formatDate(string) {
   const date = new Date(string);
@@ -41,6 +43,19 @@ export default function Orders({ navigation }) {
   const [status, setStatus] = useState("");
   const [errors, setErrors] = useState({});
   const { user } = useAuthContext();
+  const [flag, setFlag] = useState(false);
+
+  const [visible, setVisible] = useState(false);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+  const containerStyle = {
+    backgroundColor: "white",
+    padding: 20,
+    alignItems: "center",
+    width: "95%",
+    marginLeft: "3%",
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -81,31 +96,44 @@ export default function Orders({ navigation }) {
 
   const renderOrder = useCallback(({ item }) => {
     return (
-      <View style={styles.listcontainer}>
-        <Text
-          variant="titleMedium"
-          style={{ fontWeight: "600", paddingBottom: 10, width: "60%" }}
-        >
-          {item.name}
-        </Text>
-        <View style={styles.leftitems}>
-          <Text variant="titleSmall">{formatDate(item.orderdate)}</Text>
-          <Text variant="titleSmall"> Status: {item.orderstatus}</Text>
-        </View>
-        <View style={styles.rightitems}>
-          <Text style={{ paddingTop: 10 }}>
-            Amt : {`\u20B9`} {item.totalamount}
+      <TouchableOpacity onPress={() => navigation.navigate("UpdteOrder")}>
+        <View style={styles.listcontainer}>
+          <Text
+            variant="titleMedium"
+            style={{ fontWeight: "600", paddingBottom: 10, width: "60%" }}
+          >
+            {item.name}
           </Text>
-          <TouchableOpacity style={{ display: "flex", alignItems: "flex-end" }}>
+          <View style={styles.leftitems}>
+            <Text variant="titleSmall">{formatDate(item.orderdate)}</Text>
+            <Text variant="titleSmall">
+              Status:{" "}
+              <Text
+                onPress={showModal}
+                variant="titleSmall"
+                style={{ textDecorationLine: "underline" }}
+              >
+                {item.orderstatus}
+              </Text>
+            </Text>
+          </View>
+          <View style={styles.rightitems}>
+            <Text style={{ paddingTop: 10 }}>
+              Amt : {`\u20B9`} {item.totalamount}
+            </Text>
+            {/*<TouchableOpacity style={{ display: "flex", alignItems: "flex-end" }}
+          onPress={()=>navigation.navigate("UpdteOrder")}>
+
             <AntDesign
               onPress={() => redirectToUpdate(item)}
               name="edit"
-              size={35}
+              size={28}
               style={{ paddingTop: 10, paddingRight: 10 }}
             />
-          </TouchableOpacity>
+    </TouchableOpacity> */}
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   });
 
@@ -184,7 +212,7 @@ export default function Orders({ navigation }) {
             onPress={() => setShowFilters(!showFilters)}
             style={{ borderRadius: 3 }}
           >
-            {showFilters ? "HIDE FILTERS" : "SHOW FILTERS"}{" "}
+            {showFilters ? "Hide Filters" : "Show Filters"}{" "}
           </Button>
         </View>
       </View>
@@ -198,6 +226,18 @@ export default function Orders({ navigation }) {
           />
         }
       />
+      <Provider>
+        <Portal>
+          <Modal
+            visible={visible}
+            onDismiss={hideModal}
+            contentContainerStyle={containerStyle}
+          >
+            <Text variant="titleMedium">Select Status</Text>
+            <Newstatus />
+          </Modal>
+        </Portal>
+      </Provider>
     </>
   );
 }
@@ -235,7 +275,7 @@ const styles = StyleSheet.create({
   },
   listcontainer: {
     width: "95%",
-    minHeight:100,
+    minHeight: 100,
     backgroundColor: "#fafafa",
     borderRadius: 10,
     marginLeft: "3%",
@@ -253,5 +293,12 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     marginBottom: "3%",
+  },
+  popup: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    height: 200,
   },
 });
