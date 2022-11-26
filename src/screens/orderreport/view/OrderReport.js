@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { TextInput } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
 import DatePicker from "../../../component/DatePicker";
 import CitySmallFilter from "../../../component/CitySmallFilter";
 import Table from "../../../component/Table";
@@ -16,6 +16,7 @@ function oneMonthAgo() {
 export default function OrderReport({ route, navigation }) {
   const [startDate, setStartDate] = useState(oneMonthAgo());
   const [endDate, setEndDate] = useState(new Date());
+  const [flag, setFlag] = useState(false);
   const data = [
     { inm: "dosa batterr", Qty: 20, price: 200 },
     { inm: "Chapati", Qty: 30, price: 300 },
@@ -26,40 +27,7 @@ export default function OrderReport({ route, navigation }) {
     <>
       <View style={styles.container}>
         <View style={styles.pagecontainer}>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-evenly",
-              marginBottom: "4%",
-            }}
-          >
-            <View style={styles.locationcontainer}>
-              <Text style={{ fontWeight: "600", fontSize: 15 }}>From :</Text>
-              <View>
-                <DatePicker
-                  date={startDate}
-                  setDate={setStartDate}
-                  text={"From"}
-                  showFlag={true}
-                />
-              </View>
-            </View>
-
-            <View style={styles.locationcontainer}>
-              <Text style={{ fontWeight: "600", fontSize: 15 }}>To :</Text>
-              <View>
-                <DatePicker
-                  date={endDate}
-                  setDate={setEndDate}
-                  text={"To"}
-                  showFlag={true}
-                />
-              </View>
-            </View>
-          </View>
-
-          { /*  <View
+          {/*  <View
             style={{
               alignItems: "center",
             }}
@@ -73,12 +41,63 @@ export default function OrderReport({ route, navigation }) {
               </View>
             </View>
           </View>*/}
-
           <TextInput style={styles.input} placeholder="Search Retailers" />
 
+          {flag && (
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                marginBottom: "4%",
+              }}
+            >
+              <View style={styles.locationcontainer}>
+                <Text style={{ fontWeight: "600", fontSize: 15,textAlignVertical: "center" }}>From :</Text>
+                <View>
+                  <DatePicker
+                    date={startDate}
+                    setDate={setStartDate}
+                    text={"From"}
+                    showFlag={true}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.locationcontainer}>
+                <Text style={{ fontWeight: "600", fontSize: 15,textAlignVertical: "center" }}>To :</Text>
+                <View>
+                  <DatePicker
+                    date={endDate}
+                    setDate={setEndDate}
+                    text={"To"}
+                    showFlag={true}
+                  />
+                </View>
+              </View>
+            </View>
+          )}
+
+          <Button
+            onPress={() => setFlag(!flag)}
+            mode="contained"
+            style={{ borderRadius: 3 }}
+          >
+            {flag ? "Hide Filters" : "Show Filters"}
+          </Button>
+
           <View
-            style={{ width: "100%", borderBottomWidth: 1, marginTop: 10 }}
+            style={{
+              width: "100%",
+              borderBottomWidth: 1,
+              marginTop: 15,
+              marginBottom: 12,
+              borderColor: "silver",
+            }}
           ></View>
+          <Text style={{ fontSize: 17, fontWeight: "600" }}>
+            Total : Rs.2000
+          </Text>
         </View>
       </View>
 
@@ -109,12 +128,11 @@ const styles = StyleSheet.create({
   },
   pagecontainer: {
     width: "100%",
-    padding: 10,
   },
   input: {
     width: "100%",
     height: 50,
-    marginBottom: "5%",
+    marginBottom: "1%",
     marginTop: "3%",
   },
   rightitems: {
