@@ -2,7 +2,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuthContext } from "../../contexts/authContext";
 
 import LandingScreen from "../../screens/landingpage/view/LandingScreen";
-import SalesOrder from "../../screens/SalesOrder/views/SalesOrder";
+import CreateOrder from "../../screens/SalesOrder/views/CreateOrder";
+import UpdateOrder from "../../screens/SalesOrder/views/UpdateOrder";
 
 const HomeStackNavigator = createNativeStackNavigator();
 
@@ -18,10 +19,17 @@ export default HomeNavigator = () => {
         }}
       />
       <HomeStackNavigator.Screen
-        name="SalesOrder"
-        component={SalesOrder}
+        name="CreateOrder"
+        component={CreateOrder}
         options={{
           title: "Create Sales Order",
+        }}
+      />
+      <HomeStackNavigator.Screen
+        name="UpdateOrder"
+        component={UpdateOrder}
+        options={{
+          title: "Update Order",
         }}
       />
     </HomeStackNavigator.Navigator>

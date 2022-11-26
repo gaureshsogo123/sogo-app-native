@@ -64,7 +64,7 @@ export default function Orders({ navigation }) {
   };
 
   const redirectToUpdate = (order) => {
-    navigation.navigate("salesorder", { update: true, order: order });
+    navigation.navigate("UpdateOrder", { update: true, order: order });
   };
 
   const filteredOrders = useMemo(() => {
@@ -81,7 +81,10 @@ export default function Orders({ navigation }) {
 
   const renderOrder = useCallback(({ item }) => {
     return (
-      <View style={styles.listcontainer}>
+      <TouchableOpacity
+        onPress={() => redirectToUpdate(item)}
+        style={styles.listcontainer}
+      >
         <Text
           variant="titleMedium"
           style={{ fontWeight: "600", paddingBottom: 10, width: "60%" }}
@@ -105,9 +108,9 @@ export default function Orders({ navigation }) {
             />
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     );
-  });
+  }, []);
 
   return (
     <>
@@ -235,7 +238,7 @@ const styles = StyleSheet.create({
   },
   listcontainer: {
     width: "95%",
-    minHeight:100,
+    minHeight: 100,
     backgroundColor: "#fafafa",
     borderRadius: 10,
     marginLeft: "3%",

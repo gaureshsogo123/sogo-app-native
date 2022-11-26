@@ -6,38 +6,20 @@ import {
   View,
   RefreshControl,
 } from "react-native";
-import { Button, HelperText, useTheme } from "react-native-paper";
+import { Button, HelperText } from "react-native-paper";
 import { TextInput, Text } from "react-native-paper";
 import { useAuthContext } from "../../../contexts/authContext";
-import { fetchProducts, saveOrder } from "../helpers/salesOrderHelper";
+import {
+  fetchProducts,
+  saveOrder,
+  getOrderDetails,
+} from "../helpers/salesOrderHelper";
+import { calculateTotal } from "../helpers/calculateTotal";
+import Product from "./Product";
 
 const styles = StyleSheet.create({
   heading: {
     padding: 10,
-  },
-  product: {
-    margin: 5,
-    padding: 5,
-    display: "flex",
-    flexDirection: "row",
-    flex: 1,
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-  },
-  price: {
-    color: "gray",
-  },
-  unitSection: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
-  },
-  unitInput: {
-    width: 70,
-    textAlign: "center",
-    paddingHorizontal: 1,
-    paddingBottom: 1,
   },
   orderButton: {
     borderRadius: 3,
@@ -45,12 +27,11 @@ const styles = StyleSheet.create({
   },
 });
 
-function SalesOrder({ route, navigation }) {
-  const theme = useTheme();
-
+function UpdateOrder({ navigation, route }) {
   const { user } = useAuthContext();
+  const { order } = route.params;
 
-  const { retailerId, retailerName } = route.params;
+  const { retailerId } = route.params;
   const [refreshing, setRefreshing] = useState(true);
   const [products, setProducts] = useState([]);
   const [errors, setErrors] = useState({});
@@ -76,7 +57,6 @@ function SalesOrder({ route, navigation }) {
         Alert.alert("Success", "Your order has been successfully placed!");
         navigation.navigate("Orders");
       } else setErrors({ ...errors, saveOrder: result.error });
-
     } catch (error) {
       setErrors({ ...errors, saveOrder: "Failed to save order" });
     }
@@ -86,21 +66,21 @@ function SalesOrder({ route, navigation }) {
     if (!user) return;
     setErrors({ ...errors, products: "" });
     getProducts();
-  }, [user?.userId]);
+  }, [user?.userId, order.orderid]);
 
   const getProducts = async () => {
     setRefreshing(true);
     try {
       const products = await fetchProducts(user.userId, 0, "ALL");
-      if (products.data.length === 0)
-        setErrors({
-          ...errors,
-          products: "You do not have any products yet",
-        });
-      else {
+      const orderDetails = await getOrderDetails(user.userId, order.orderid);
+      if (orderDetails.data) {
+        // map product quantity to product quantity in order
         products.data = products.data.map((product) => ({
           ...product,
-          quantity: product.quantity || 0,
+          quantity:
+            orderDetails.data.find(
+              (oProduct) => oProduct.productid == product.productid
+            )?.productquantity || 0,
           discount: product.discount || 0,
         }));
         setProducts(products.data);
@@ -111,8 +91,9 @@ function SalesOrder({ route, navigation }) {
       setRefreshing(false);
     }
   };
+
   useEffect(() => {
-    calculateTotal();
+    setPrice(calculateTotal(products));
   }, [products]);
 
   const updateQuantity = (amount, id) => {
@@ -124,48 +105,8 @@ function SalesOrder({ route, navigation }) {
     });
   };
 
-  const calculateTotal = () => {
-    let total = 0;
-    let discount = 0;
-    let finalPrice = 0;
-    products.forEach((product) => {
-      finalPrice +=
-        (product.price - product.discount) * (product.quantity || 0);
-      discount += product.discount * (product.quantity || 0);
-      total += product.price * (product.quantity || 0);
-    });
-    setPrice({ total, discount, finalPrice });
-  };
-
   const renderProduct = useCallback(({ item }) => {
-    return (
-      <View
-        style={{
-          ...styles.product,
-          borderBottomColor: theme.colors.primary,
-        }}
-      >
-        <View>
-          <Text variant="titleMedium">{item.productname} </Text>
-          <Text style={styles.price} variant="titleSmall">
-            Price: {item.price}{" "}
-          </Text>
-          <Text variant="titleSmall">
-            Amount: {(item.price - item.discount) * item.quantity}{" "}
-          </Text>
-        </View>
-        <View style={styles.unitSection}>
-          <TextInput
-            keyboardType="number-pad"
-            style={styles.unitInput}
-            variant="flat"
-            value={item.quantity === 0 ? "" : item.quantity + ""}
-            onChangeText={(text) => updateQuantity(text, item.productid)}
-          />
-          <Text variant="labelLarge"> units</Text>
-        </View>
-      </View>
-    );
+    return <Product item={item} updateQuantity={updateQuantity} />;
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -174,13 +115,13 @@ function SalesOrder({ route, navigation }) {
     );
   }, [searchFilter, products]);
 
-  const productKeyExtractor = useCallback((product) => product.productid);
+  const productKeyExtractor = useCallback((product) => product.productid, []);
 
   return (
     <>
       <View style={styles.heading}>
         <Text style={{ marginBottom: 5 }} variant="titleLarge">
-          <Text style={{ color: "gray" }}>Outlet:</Text> {retailerName}
+          <Text style={{ color: "gray" }}>Outlet:</Text> {order.name}
         </Text>
         <Text style={{ marginBottom: 5 }} variant="titleMedium">
           Total Amount : {`\u20B9`} {parseFloat(price.total).toFixed(2)}
@@ -212,10 +153,10 @@ function SalesOrder({ route, navigation }) {
       />
 
       <Button onPress={placeOrder} mode="contained" style={styles.orderButton}>
-        Place Order
+        Update Order
       </Button>
     </>
   );
 }
 
-export default SalesOrder;
+export default UpdateOrder;

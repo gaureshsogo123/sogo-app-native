@@ -52,3 +52,14 @@ export const saveOrder = async (
       return { error: err.message };
     });
 };
+
+export const getOrderDetails = async (distributorId, orderId) => {
+  return axiosInstance
+    .get(`/order/${distributorId}/${orderId}`)
+    .then((res) => {
+      return { data: res.data.data };
+    })
+    .catch((err) => {
+      return { error: err.message };
+    });
+};
