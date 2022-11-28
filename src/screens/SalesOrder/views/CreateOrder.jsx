@@ -50,7 +50,6 @@ function CreateOrder({ route, navigation }) {
       );
       if (!result.error) {
         Alert.alert("Success", "Your order has been successfully placed!");
-        console.log(result.data);
         navigation.navigate("Orders");
       } else setErrors({ ...errors, saveOrder: result.error });
     } catch (error) {
@@ -117,10 +116,12 @@ function CreateOrder({ route, navigation }) {
     <>
       <View style={styles.heading}>
         <Text style={{ marginBottom: 5 }} variant="titleLarge">
-          <Text style={{ color: "gray" }}>Outlet:</Text> {retailerName}
+          <Text style={{ color: "gray", fontSize: 18 }}>Outlet :</Text>{" "}
+          {retailerName}
         </Text>
         <Text style={{ marginBottom: 5 }} variant="titleMedium">
-          Total Amount : {`\u20B9`} {parseFloat(price.total).toFixed(2)}
+          <Text style={{ color: "gray", fontSize: 18 }}>Total Amount :</Text>{" "}
+          {`\u20B9`} {parseFloat(price.total).toFixed(2)}
         </Text>
       </View>
 

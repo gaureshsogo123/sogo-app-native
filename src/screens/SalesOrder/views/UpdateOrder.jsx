@@ -73,6 +73,7 @@ function UpdateOrder({ navigation, route }) {
     try {
       const products = await fetchProducts(user.userId, 0, "ALL");
       const orderDetails = await getOrderDetails(user.userId, order.orderid);
+      console.log(orderDetails.data);
       if (orderDetails.data) {
         // map product quantity to product quantity in order
         products.data = products.data.map((product) => ({

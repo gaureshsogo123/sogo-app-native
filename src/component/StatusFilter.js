@@ -13,6 +13,7 @@ function StatusFilter({ options, setValue }) {
         placeholder="Placed"
         save="value"
         boxStyles={{ borderWidth: 0, borderBottomWidth: 1,padding:0 }}
+        
       />
     </View>
   );

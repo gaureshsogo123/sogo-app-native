@@ -5,15 +5,16 @@ import {
   TouchableOpacity,
   View,
   RefreshControl,
+  Alert,
 } from "react-native";
 import { TextInput, Text, Button, HelperText } from "react-native-paper";
-import { AntDesign } from "@expo/vector-icons";
 import DatePicker from "../../../component/DatePicker";
 import CitySmallFilter from "../../../component/CitySmallFilter";
 import StatusFilter from "../../../component/StatusFilter";
 import { useAuthContext } from "../../../contexts/authContext";
-import { getOrders } from "../helpers/ordersHelper";
+import { getOrders, getOrderStatus } from "../helpers/ordersHelper";
 import statuses from "../../../constants/statusOptions";
+import UpdateOrderStatus from "./UpdateOrderStatus";
 
 function formatDate(string) {
   const date = new Date(string);
@@ -32,19 +33,33 @@ function oneMonthAgo() {
 }
 
 export default function Orders({ navigation }) {
+  const { user } = useAuthContext();
   const [refreshing, setRefreshing] = useState(true);
+
   const [orders, setOrders] = useState([]);
+  const [editStatusData, setEditStatusData] = useState({});
+
   const [searchFilter, setSearchFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [startDate, setStartDate] = useState(oneMonthAgo());
   const [endDate, setEndDate] = useState(new Date());
   const [status, setStatus] = useState("");
   const [errors, setErrors] = useState({});
-  const { user } = useAuthContext();
+  const [flag, setFlag] = useState(false);
+
+  const [visible, setVisible] = useState(false);
+
+  const showModal = (orderid, currentStatus) => {
+    setEditStatusData({ ...editStatusData, orderid: orderid, currentStatus });
+    setVisible(true);
+  };
+  const hideModal = () => {
+    setEditStatusData({});
+    setVisible(false);
+  };
 
   useEffect(() => {
     if (!user) return;
-
     fetchOrders();
   }, [user?.userId]);
 
@@ -81,32 +96,42 @@ export default function Orders({ navigation }) {
 
   const renderOrder = useCallback(({ item }) => {
     return (
-      <TouchableOpacity
-        onPress={() => redirectToUpdate(item)}
-        style={styles.listcontainer}
-      >
-        <Text
-          variant="titleMedium"
-          style={{ fontWeight: "600", paddingBottom: 10, width: "60%" }}
-        >
-          {item.name}
-        </Text>
-        <View style={styles.leftitems}>
-          <Text variant="titleSmall">{formatDate(item.orderdate)}</Text>
-          <Text variant="titleSmall"> Status: {item.orderstatus}</Text>
-        </View>
-        <View style={styles.rightitems}>
-          <Text style={{ paddingTop: 10 }}>
-            Amt : {`\u20B9`} {item.totalamount}
+      <TouchableOpacity onPress={() => redirectToUpdate(item)}>
+        <View style={styles.listcontainer}>
+          <Text
+            variant="titleMedium"
+            style={{ fontWeight: "600", paddingBottom: 10, width: "60%" }}
+          >
+            {item.name}
           </Text>
-          <TouchableOpacity style={{ display: "flex", alignItems: "flex-end" }}>
+          <View style={styles.leftitems}>
+            <Text variant="titleSmall">{formatDate(item.orderdate)}</Text>
+            <Text variant="titleSmall">
+              Status:{" "}
+              <Text
+                onPress={() => showModal(item.orderid, item.orderstatus)}
+                variant="titleSmall"
+                style={{ textDecorationLine: "underline", padding: 5 }}
+              >
+                {item.orderstatus}
+              </Text>
+            </Text>
+          </View>
+          <View style={styles.rightitems}>
+            <Text style={{ paddingTop: 10 }}>
+              Amt : {`\u20B9`} {item.totalamount}
+            </Text>
+            {/*<TouchableOpacity style={{ display: "flex", alignItems: "flex-end" }}
+          onPress={()=>navigation.navigate("UpdteOrder")}>
+
             <AntDesign
               onPress={() => redirectToUpdate(item)}
               name="edit"
-              size={35}
+              size={28}
               style={{ paddingTop: 10, paddingRight: 10 }}
             />
-          </TouchableOpacity>
+    </TouchableOpacity> */}
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -187,7 +212,7 @@ export default function Orders({ navigation }) {
             onPress={() => setShowFilters(!showFilters)}
             style={{ borderRadius: 3 }}
           >
-            {showFilters ? "HIDE FILTERS" : "SHOW FILTERS"}{" "}
+            {showFilters ? "Hide Filters" : "Show Filters"}{" "}
           </Button>
         </View>
       </View>
@@ -200,6 +225,12 @@ export default function Orders({ navigation }) {
             onRefresh={() => fetchOrders()}
           />
         }
+      />
+      <UpdateOrderStatus
+        value={editStatusData}
+        hideModal={hideModal}
+        setOrders={setOrders}
+        visible={visible}
       />
     </>
   );
@@ -256,5 +287,12 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     marginBottom: "3%",
+  },
+  popup: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    height: 200,
   },
 });
