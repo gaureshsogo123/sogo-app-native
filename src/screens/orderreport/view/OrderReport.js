@@ -23,9 +23,9 @@ export default function OrderReport() {
 
   return (
     <>
-      <View style={styles.container}>
+      {/* <View style={styles.container}>
         <View style={styles.pagecontainer}>
-          {/*  <View
+            <View
             style={{
               alignItems: "center",
             }}
@@ -38,7 +38,7 @@ export default function OrderReport() {
                 {<CitySmallFilter />}
               </View>
             </View>
-          </View>*/}
+          </View>
           <TextInput style={styles.input} placeholder="Search Retailers" />
 
           {flag && (
@@ -93,7 +93,7 @@ export default function OrderReport() {
             Total : Rs.2000
           </Text>
         </View>
-      </View>
+      </View>*/}
 
       <ScrollView>
         <View style={styles.container}>
