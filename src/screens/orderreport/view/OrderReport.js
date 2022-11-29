@@ -7,21 +7,14 @@ import Table from "../../../component/Table";
 import { getOrderReport } from "../helper/OederReportHelper";
 import { useAuthContext } from "../../../contexts/authContext";
 
-function oneMonthAgo() {
-  let date = new Date();
-  if (date.getMonth === 0) {
-    date.setMonth(11);
-    date.setFullYear(date.getFullYear() - 1);
-  } else date.setMonth(date.getMonth() - 1);
-  return date;
-}
+
 export default function OrderReport({ route, navigation }) {
-  const [startDate, setStartDate] = useState(oneMonthAgo());
-  const [endDate, setEndDate] = useState(new Date());
+  
+  const [date, setDate] = useState(new Date());
   const [flag, setFlag] = useState(false);
   const [products, setProducts] = useState([]);
 
-  const date = new Date();
+
 
   const { user } = useAuthContext();
   let userId = user.userId;
@@ -69,38 +62,19 @@ export default function OrderReport({ route, navigation }) {
                     textAlignVertical: "center",
                   }}
                 >
-                  From :
+                  Date :
                 </Text>
                 <View>
                   <DatePicker
-                    date={startDate}
-                    setDate={setStartDate}
+                    date={date}
+                    setDate={setDate}
                     text={"From"}
                     showFlag={true}
                   />
                 </View>
               </View>
 
-              <View style={styles.locationcontainer}>
-                <Text
-                  style={{
-                    fontWeight: "600",
-                    fontSize: 15,
-                    textAlignVertical: "center",
-                  }}
-                >
-                  To :
-                </Text>
-                <View>
-                  <DatePicker
-                    date={endDate}
-                    setDate={setEndDate}
-                    text={"To"}
-                    showFlag={true}
-                  />
-                </View>
-              </View>
-            </View>
+                          </View>
           )}
 
           <Button
