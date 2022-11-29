@@ -1,5 +1,4 @@
 import axiosInstance from "../../../../axiosInstance";
-import axios from "axios";
 
 export const fetchProducts = async (
   userId,

@@ -78,6 +78,7 @@ function CreateOrder({ route, navigation }) {
           quantity: product.quantity || 0,
           discount: product.discount || 0,
         }));
+        console.log(products.data);
         setProducts(products.data);
       }
     } catch (err) {

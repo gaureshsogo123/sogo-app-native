@@ -9,7 +9,6 @@ import {
 import { TextInput, Text, Button, HelperText } from "react-native-paper";
 import { format, subDays } from "date-fns";
 import DatePicker from "../../../component/DatePicker";
-import CitySmallFilter from "../../../component/CitySmallFilter";
 import StatusFilter from "../../../component/StatusFilter";
 import { useAuthContext } from "../../../contexts/authContext";
 import { getOrders } from "../helpers/ordersHelper";
@@ -29,7 +28,6 @@ export default function Orders({ navigation }) {
   const [endDate, setEndDate] = useState(new Date());
   const [status, setStatus] = useState("");
   const [errors, setErrors] = useState({});
-  const [flag, setFlag] = useState(false);
 
   const [visible, setVisible] = useState(false);
 
@@ -105,7 +103,7 @@ export default function Orders({ navigation }) {
           </View>
           <View style={styles.rightitems}>
             <Text style={{ paddingTop: 10 }}>
-              Amt : {`\u20B9`} {item.totalamount}
+              Amt : {`\u20B9`} {parseFloat(item.totalamount).toFixed(2)}
             </Text>
           </View>
         </View>

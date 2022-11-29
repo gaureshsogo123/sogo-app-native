@@ -4,6 +4,7 @@ export const signIn = async ({ mobile_no }) => {
   return axiosInstance
     .post("/user/signIn", { mobile_no })
     .then((res) => {
+      console.log(res.data.data);
       return { message: res.data.message, data: res.data.data };
     })
     .catch((err) => {

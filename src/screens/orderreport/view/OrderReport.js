@@ -1,27 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import DatePicker from "../../../component/DatePicker";
-import CitySmallFilter from "../../../component/CitySmallFilter";
 import Table from "../../../component/Table";
 
-function oneMonthAgo() {
-  let date = new Date();
-  if (date.getMonth === 0) {
-    date.setMonth(11);
-    date.setFullYear(date.getFullYear() - 1);
-  } else date.setMonth(date.getMonth() - 1);
-  return date;
-}
-export default function OrderReport({ route, navigation }) {
-  const [startDate, setStartDate] = useState(oneMonthAgo());
-  const [endDate, setEndDate] = useState(new Date());
+import { getOrderReport } from "../helper/OederReportHelper";
+import { useAuthContext } from "../../../contexts/authContext";
+
+export default function OrderReport() {
+  const [date, setDate] = useState(new Date());
   const [flag, setFlag] = useState(false);
-  const data = [
-    { inm: "dosa batterr", Qty: 20, price: 200 },
-    { inm: "Chapati", Qty: 30, price: 300 },
-    { inm: "Ata", Qty: 20, price: 200 },
-  ];
+  const [products, setProducts] = useState([]);
+
+  const { user } = useAuthContext();
+  let userId = user.userId;
+
+  useEffect(() => {
+    getOrderReport(userId, date).then((res) => {
+      setProducts(res.data);
+    });
+  }, [userId, date]);
 
   return (
     <>
@@ -53,24 +51,20 @@ export default function OrderReport({ route, navigation }) {
               }}
             >
               <View style={styles.locationcontainer}>
-                <Text style={{ fontWeight: "600", fontSize: 15,textAlignVertical: "center" }}>From :</Text>
+                <Text
+                  style={{
+                    fontWeight: "600",
+                    fontSize: 15,
+                    textAlignVertical: "center",
+                  }}
+                >
+                  Date :
+                </Text>
                 <View>
                   <DatePicker
-                    date={startDate}
-                    setDate={setStartDate}
+                    date={date}
+                    setDate={setDate}
                     text={"From"}
-                    showFlag={true}
-                  />
-                </View>
-              </View>
-
-              <View style={styles.locationcontainer}>
-                <Text style={{ fontWeight: "600", fontSize: 15,textAlignVertical: "center" }}>To :</Text>
-                <View>
-                  <DatePicker
-                    date={endDate}
-                    setDate={setEndDate}
-                    text={"To"}
                     showFlag={true}
                   />
                 </View>
@@ -95,7 +89,7 @@ export default function OrderReport({ route, navigation }) {
               borderColor: "silver",
             }}
           ></View>
-          <Text style={{ fontSize: 17, fontWeight: "600" }}>
+          <Text style={{ fontSize: 17, fontWeight: "600", marginLeft: "3%" }}>
             Total : Rs.2000
           </Text>
         </View>
@@ -104,7 +98,7 @@ export default function OrderReport({ route, navigation }) {
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.pagecontainer}>
-            <Table />
+            <Table products={products} />
           </View>
         </View>
       </ScrollView>
@@ -133,7 +127,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     marginBottom: "1%",
-    marginTop: "3%",
   },
   rightitems: {
     position: "absolute",
