@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { DataTable } from "react-native-paper";
 
-function Table() {
+function Table({products}) {
   const data = [
     { inm: "dosa batterr", Qty: 20, price: 200 },
     { inm: "Chapati", Qty: 30, price: 300 },
@@ -21,7 +21,7 @@ function Table() {
             <DataTable.Title numeric>Amount</DataTable.Title>
           </DataTable.Header>
         </View>
-        {data.map((val, i) => {
+        {products.map((val, i) => {
           return (
             <View
               key={i}
@@ -33,10 +33,10 @@ function Table() {
             >
               <DataTable.Row key={i}>
                 <DataTable.Cell textStyle={{ fontWeight: "600" }}>
-                  {val.inm}
+                  {val.productname}
                 </DataTable.Cell>
-                <DataTable.Cell numeric>{val.Qty}</DataTable.Cell>
-                <DataTable.Cell numeric>{val.price}</DataTable.Cell>
+                <DataTable.Cell numeric>{val.productquantity}</DataTable.Cell>
+                <DataTable.Cell numeric>100</DataTable.Cell>
               </DataTable.Row>
             </View>
           );

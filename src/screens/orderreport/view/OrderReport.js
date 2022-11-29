@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import DatePicker from "../../../component/DatePicker";
-import CitySmallFilter from "../../../component/CitySmallFilter";
+//import CitySmallFilter from "../../../component/CitySmallFilter";
 import Table from "../../../component/Table";
+//import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getOrderReport } from "../helper/OederReportHelper";
+import { useAuthContext } from "../../../contexts/authContext";
+//import { format } from "date-fns";
+
+
+
 
 function oneMonthAgo() {
   let date = new Date();
@@ -17,12 +24,34 @@ export default function OrderReport({ route, navigation }) {
   const [startDate, setStartDate] = useState(oneMonthAgo());
   const [endDate, setEndDate] = useState(new Date());
   const [flag, setFlag] = useState(false);
+  const[products,setProducts]=useState([])
+
+  const date = new Date();
+  
+  
+  
+
+  
+
+  const { user } = useAuthContext();
+  let userId = user.userId;
+
+  
+
   const data = [
     { inm: "dosa batterr", Qty: 20, price: 200 },
     { inm: "Chapati", Qty: 30, price: 300 },
     { inm: "Ata", Qty: 20, price: 200 },
   ];
 
+  useEffect(()=>{
+    getOrderReport(userId,date).then((res)=>{
+      console.log(res.data);
+      setProducts(res.data);
+    })
+  },[userId,date]);
+
+  
   return (
     <>
       <View style={styles.container}>
@@ -95,7 +124,7 @@ export default function OrderReport({ route, navigation }) {
               borderColor: "silver",
             }}
           ></View>
-          <Text style={{ fontSize: 17, fontWeight: "600" }}>
+          <Text style={{ fontSize: 17, fontWeight: "600",marginLeft:"3%" }}>
             Total : Rs.2000
           </Text>
         </View>
@@ -104,7 +133,7 @@ export default function OrderReport({ route, navigation }) {
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.pagecontainer}>
-            <Table />
+            <Table products={products}/>
           </View>
         </View>
       </ScrollView>
@@ -133,7 +162,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     marginBottom: "1%",
-    marginTop: "3%",
   },
   rightitems: {
     position: "absolute",

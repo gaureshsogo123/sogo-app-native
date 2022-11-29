@@ -17,6 +17,7 @@ export const fetchProducts = async (
     })
     .then((res) => {
       const products = res.data.data;
+      console.log("products",products)
       return { data: products };
     })
     .catch((err) => {

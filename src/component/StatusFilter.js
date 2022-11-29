@@ -15,6 +15,7 @@ function StatusFilter({ options, setValue }) {
         boxStyles={{ borderWidth: 0, borderBottomWidth: 1,padding:0 }}
         
       />
+  
     </View>
   );
 }
