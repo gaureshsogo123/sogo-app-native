@@ -7,14 +7,10 @@ import Table from "../../../component/Table";
 import { getOrderReport } from "../helper/OederReportHelper";
 import { useAuthContext } from "../../../contexts/authContext";
 
-
-export default function OrderReport({ route, navigation }) {
-  
+export default function OrderReport() {
   const [date, setDate] = useState(new Date());
   const [flag, setFlag] = useState(false);
   const [products, setProducts] = useState([]);
-
-
 
   const { user } = useAuthContext();
   let userId = user.userId;
@@ -73,8 +69,7 @@ export default function OrderReport({ route, navigation }) {
                   />
                 </View>
               </View>
-
-                          </View>
+            </View>
           )}
 
           <Button

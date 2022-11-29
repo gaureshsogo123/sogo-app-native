@@ -7,61 +7,41 @@ import {
   RefreshControl,
 } from "react-native";
 import { TextInput, Text, Button, HelperText } from "react-native-paper";
-import { AntDesign } from "@expo/vector-icons";
+import { format, subDays } from "date-fns";
 import DatePicker from "../../../component/DatePicker";
 import StatusFilter from "../../../component/StatusFilter";
 import { useAuthContext } from "../../../contexts/authContext";
 import { getOrders } from "../helpers/ordersHelper";
 import statuses from "../../../constants/statusOptions";
-import Newstatus from "../../../component/Newstatus";
-import { Modal, Portal, Provider } from "react-native-paper";
-
-
-
-
-function formatDate(string) {
-  const date = new Date(string);
-  return `${date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()}-${
-    date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-  }-${date.getFullYear()}`;
-}
-
-function oneMonthAgo() {
-  let date = new Date();
-  if (date.getMonth === 0) {
-    date.setMonth(11);
-    date.setFullYear(date.getFullYear() - 1);
-  } else date.setMonth(date.getMonth() - 1);
-  return date;
-}
+import UpdateOrderStatus from "./UpdateOrderStatus";
 
 export default function Orders({ navigation }) {
+  const { user } = useAuthContext();
   const [refreshing, setRefreshing] = useState(true);
+
   const [orders, setOrders] = useState([]);
+  const [editStatusData, setEditStatusData] = useState({});
+
   const [searchFilter, setSearchFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [startDate, setStartDate] = useState(oneMonthAgo());
+  const [startDate, setStartDate] = useState(subDays(new Date(), 2));
   const [endDate, setEndDate] = useState(new Date());
   const [status, setStatus] = useState("");
   const [errors, setErrors] = useState({});
-  const { user } = useAuthContext();
- 
 
   const [visible, setVisible] = useState(false);
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-  const containerStyle = {
-    backgroundColor: "white",
-    padding: 20,
-    alignItems: "center",
-    width: "95%",
-    marginLeft: "3%",
+  const showUpdateStatus = (orderid, currentStatus) => {
+    setEditStatusData({ ...editStatusData, orderid: orderid, currentStatus });
+    setVisible(true);
+  };
+  const hideUpdateStatus = () => {
+    setEditStatusData({});
+    setVisible(false);
   };
 
   useEffect(() => {
     if (!user) return;
-
     fetchOrders();
   }, [user?.userId]);
 
@@ -81,7 +61,7 @@ export default function Orders({ navigation }) {
   };
 
   const redirectToUpdate = (order) => {
-    navigation.navigate("salesorder", { update: true, order: order });
+    navigation.navigate("UpdateOrder", { update: true, order: order });
   };
 
   const filteredOrders = useMemo(() => {
@@ -98,7 +78,7 @@ export default function Orders({ navigation }) {
 
   const renderOrder = useCallback(({ item }) => {
     return (
-      <TouchableOpacity onPress={() => navigation.navigate("UpdteOrder")}>
+      <TouchableOpacity onPress={() => redirectToUpdate(item)}>
         <View style={styles.listcontainer}>
           <Text
             variant="titleMedium"
@@ -107,39 +87,29 @@ export default function Orders({ navigation }) {
             {item.name}
           </Text>
           <View style={styles.leftitems}>
-            <Text variant="titleSmall">{formatDate(item.orderdate)}</Text>
+            <Text variant="titleSmall">
+              {format(new Date(item.orderdate), "dd-MM-yyyy")}
+            </Text>
             <Text variant="titleSmall">
               Status:{" "}
               <Text
-                onPress={showModal}
+                onPress={() => showUpdateStatus(item.orderid, item.orderstatus)}
                 variant="titleSmall"
-                style={{ textDecorationLine:"underline" }}
+                style={{ textDecorationLine: "underline", padding: 5 }}
               >
                 {item.orderstatus}
-                <AntDesign name="caretdown" size={10} style={{color:"gray"}}/>
               </Text>
             </Text>
-            
           </View>
           <View style={styles.rightitems}>
             <Text style={{ paddingTop: 10 }}>
-              Amt : {`\u20B9`} {item.totalamount}
+              Amt : {`\u20B9`} {parseFloat(item.totalamount).toFixed(2)}
             </Text>
-            {/*<TouchableOpacity style={{ display: "flex", alignItems: "flex-end" }}
-          onPress={()=>navigation.navigate("UpdteOrder")}>
-
-            <AntDesign
-              onPress={() => redirectToUpdate(item)}
-              name="edit"
-              size={28}
-              style={{ paddingTop: 10, paddingRight: 10 }}
-            />
-    </TouchableOpacity> */}
           </View>
         </View>
       </TouchableOpacity>
     );
-  });
+  }, []);
 
   return (
     <>
@@ -150,7 +120,6 @@ export default function Orders({ navigation }) {
             value={searchFilter}
             onChangeText={(text) => setSearchFilter(text)}
             placeholder="Search Retailers"
-            
           />
           {showFilters && (
             <>
@@ -231,18 +200,12 @@ export default function Orders({ navigation }) {
           />
         }
       />
-      <Provider>
-        <Portal>
-          <Modal
-            visible={visible}
-            onDismiss={hideModal}
-            contentContainerStyle={containerStyle}
-          >
-            <Text variant="titleMedium">Select Status</Text>
-            <Newstatus />
-          </Modal>
-        </Portal>
-      </Provider>
+      <UpdateOrderStatus
+        value={editStatusData}
+        hideModal={hideUpdateStatus}
+        setOrders={setOrders}
+        visible={visible}
+      />
     </>
   );
 }

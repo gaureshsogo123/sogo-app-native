@@ -1,6 +1,7 @@
 import axiosInstance from "../../../../axiosInstance";
+import { Alert } from "react-native";
 
-export const getOrders = (user_id) => {
+export const getOrders = async (user_id) => {
   return axiosInstance
     .post("/order", {
       user_id: user_id,
@@ -13,33 +14,31 @@ export const getOrders = (user_id) => {
     });
 };
 
-export const getOrderStatus = () => {
+export const getOrderStatus = async () => {
   return axiosInstance
     .get("/order/orderStatus")
     .then((res) => {
-      console.log("get order status", res.data.data);
       return { data: res.data.data };
     })
     .catch((err) => {
+      Alert.alert("", "There was an error");
       return { message: err.message };
     });
 };
 
-export const editOrderStatus = (orderId, orderStatusId, orderStatus) => {
+export const editOrderStatus = async (orderId, orderStatusId, orderStatus) => {
   return axiosInstance
     .put("/order/editOrderStatus", { orderId, orderStatusId, orderStatus })
     .then((res) => {
-      console.log("edit order status", res.data.data);
-      toast.success("Order status updated !!!");
       return { data: res.data.data };
     })
     .catch((err) => {
-      toast.error("Order status update failed !!!");
+      Alert.alert("", "There was an error");
       return { message: err.message };
     });
 };
 
-export const addRetailer = (mobile, name, address) => {
+export const addRetailer = async (mobile, name, address) => {
   return axiosInstance
     .post("/retailer/addRetailer", { mobile, name, address })
     .then((res) => {
@@ -64,7 +63,7 @@ export const addRetailer = (mobile, name, address) => {
     });
 };
 
-export const getOrderSummary = (userId, date) => {
+export const getOrderSummary = async (userId, date) => {
   const formatDate = format(date, "yyyy-MM-dd");
   return axiosInstance
     .post(`/order/summary`, { userId, date: formatDate })
@@ -77,7 +76,7 @@ export const getOrderSummary = (userId, date) => {
     });
 };
 
-export const downloadOrderSummary = (userId, date) => {
+export const downloadOrderSummary = async (userId, date) => {
   const formatDate = format(date, "yyyy-MM-dd");
   return axiosInstance
     .post(
