@@ -7,7 +7,6 @@ import {
   RefreshControl,
 } from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
-//import CityFilter from "../../../component/CityFilter";
 import { useAuthContext } from "../../../contexts/authContext";
 import { getRetailers } from "../helpers/landingPageHelper";
 
@@ -18,14 +17,6 @@ export default function LandingScreen({ navigation }) {
   const [errors, setErrors] = useState({});
   const [filterText, setFilterText] = useState("");
 
-
-  const cities = [
-    { key: "1", value: "Mumbai" },
-    { key: "2", value: "Delhi" },
-    { key: "3", value: "Chennai" },
-    { key: "4", value: "Kerla" },
-    { key: "5", value: "Madgaon" },
-  ];
   const { user } = useAuthContext();
 
   useEffect(() => {
@@ -80,7 +71,14 @@ export default function LandingScreen({ navigation }) {
     <>
       <View style={styles.container}>
         <View style={styles.pagecontainer}>
-          <Text style={{ fontWeight: "700", fontSize: 18, paddingBottom: 3,marginLeft:"3%" }}>
+          <Text
+            style={{
+              fontWeight: "700",
+              fontSize: 18,
+              paddingBottom: 3,
+              marginLeft: "3%",
+            }}
+          >
             Select Customer
           </Text>
           <TextInput

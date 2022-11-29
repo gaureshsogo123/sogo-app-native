@@ -9,14 +9,13 @@ import {
 import { TextInput, Text, Button, HelperText } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
 import DatePicker from "../../../component/DatePicker";
-//import CitySmallFilter from "../../../component/CitySmallFilter";
 import StatusFilter from "../../../component/StatusFilter";
 import { useAuthContext } from "../../../contexts/authContext";
 import { getOrders } from "../helpers/ordersHelper";
 import statuses from "../../../constants/statusOptions";
 import Newstatus from "../../../component/Newstatus";
 import { Modal, Portal, Provider } from "react-native-paper";
-//import { FontAwesome5} from "@expo/vector-icons";
+
 
 
 
@@ -46,7 +45,7 @@ export default function Orders({ navigation }) {
   const [status, setStatus] = useState("");
   const [errors, setErrors] = useState({});
   const { user } = useAuthContext();
- // const [flag, setFlag] = useState(false);
+ 
 
   const [visible, setVisible] = useState(false);
 
