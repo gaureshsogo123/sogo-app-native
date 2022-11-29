@@ -57,9 +57,15 @@ function SalesOrder({ route, navigation }) {
   const [price, setPrice] = useState({ total: 0, discount: 0, finalPrice: 0 });
   const [searchFilter, setSearchFilter] = useState("");
 
+  
+
+
+
+
   const placeOrder = async () => {
     setErrors({ ...errors, saveOrder: "" });
     const orderProducts = products.filter((product) => product.quantity !== 0);
+    console.log(products)
     if (orderProducts.length === 0) return;
     try {
       const result = await saveOrder(
@@ -103,6 +109,7 @@ function SalesOrder({ route, navigation }) {
           quantity: product.quantity || 0,
           discount: product.discount || 0,
         }));
+        console.log(products.data);
         setProducts(products.data);
       }
     } catch (err) {
@@ -160,7 +167,7 @@ function SalesOrder({ route, navigation }) {
             style={styles.unitInput}
             variant="flat"
             value={item.quantity === 0 ? "" : item.quantity + ""}
-            onChangeText={(text) => updateQuantity(text, item.productid)}
+            onChangeText={(text) => updateQuantity(text, item.productid,item)}
           />
           <Text variant="labelLarge"> units</Text>
         </View>

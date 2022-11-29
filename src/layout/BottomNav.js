@@ -31,7 +31,11 @@ export default function BottomNav() {
           tabBarIcon: (props) => <BottomIconContainer name="book" {...props} />,
           title: "My Orders",
           ...defaultTabOptions,
+          headerTitleStyle:{marginLeft:10}
         }}
+        
+
+      
       />
       <Tab.Screen
         name="Order Report"
@@ -42,6 +46,7 @@ export default function BottomNav() {
           ),
           title: "Order Report",
           ...defaultTabOptions,
+          headerTitleStyle:{marginLeft:8}
         }}
       />
       <Tab.Screen

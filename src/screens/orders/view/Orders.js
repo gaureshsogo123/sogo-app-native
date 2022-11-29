@@ -9,13 +9,16 @@ import {
 import { TextInput, Text, Button, HelperText } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
 import DatePicker from "../../../component/DatePicker";
-import CitySmallFilter from "../../../component/CitySmallFilter";
+//import CitySmallFilter from "../../../component/CitySmallFilter";
 import StatusFilter from "../../../component/StatusFilter";
 import { useAuthContext } from "../../../contexts/authContext";
 import { getOrders } from "../helpers/ordersHelper";
 import statuses from "../../../constants/statusOptions";
 import Newstatus from "../../../component/Newstatus";
 import { Modal, Portal, Provider } from "react-native-paper";
+//import { FontAwesome5} from "@expo/vector-icons";
+
+
 
 function formatDate(string) {
   const date = new Date(string);
@@ -43,7 +46,7 @@ export default function Orders({ navigation }) {
   const [status, setStatus] = useState("");
   const [errors, setErrors] = useState({});
   const { user } = useAuthContext();
-  const [flag, setFlag] = useState(false);
+ // const [flag, setFlag] = useState(false);
 
   const [visible, setVisible] = useState(false);
 
@@ -111,11 +114,13 @@ export default function Orders({ navigation }) {
               <Text
                 onPress={showModal}
                 variant="titleSmall"
-                style={{ textDecorationLine: "underline" }}
+                style={{ textDecorationLine:"underline" }}
               >
                 {item.orderstatus}
+                <AntDesign name="caretdown" size={10} style={{color:"gray"}}/>
               </Text>
             </Text>
+            
           </View>
           <View style={styles.rightitems}>
             <Text style={{ paddingTop: 10 }}>
@@ -146,6 +151,7 @@ export default function Orders({ navigation }) {
             value={searchFilter}
             onChangeText={(text) => setSearchFilter(text)}
             placeholder="Search Retailers"
+            
           />
           {showFilters && (
             <>
