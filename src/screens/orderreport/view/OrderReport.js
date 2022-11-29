@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Button, TextInput } from "react-native-paper";
-import DatePicker from "../../../component/DatePicker";
+//import { Button, TextInput } from "react-native-paper";
+//import DatePicker from "../../../component/DatePicker";
 import Table from "../../../component/Table";
 
 import { getOrderReport } from "../helper/OederReportHelper";
@@ -9,7 +9,7 @@ import { useAuthContext } from "../../../contexts/authContext";
 
 export default function OrderReport() {
   const [date, setDate] = useState(new Date());
-  const [flag, setFlag] = useState(false);
+ // const [flag, setFlag] = useState(false);
   const [products, setProducts] = useState([]);
 
   const { user } = useAuthContext();
