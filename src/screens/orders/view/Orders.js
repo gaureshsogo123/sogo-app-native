@@ -49,11 +49,11 @@ export default function Orders({ navigation }) {
 
   const [visible, setVisible] = useState(false);
 
-  const showModal = (orderid, currentStatus) => {
+  const showUpdateStatus = (orderid, currentStatus) => {
     setEditStatusData({ ...editStatusData, orderid: orderid, currentStatus });
     setVisible(true);
   };
-  const hideModal = () => {
+  const hideUpdateStatus = () => {
     setEditStatusData({});
     setVisible(false);
   };
@@ -109,7 +109,7 @@ export default function Orders({ navigation }) {
             <Text variant="titleSmall">
               Status:{" "}
               <Text
-                onPress={() => showModal(item.orderid, item.orderstatus)}
+                onPress={() => showUpdateStatus(item.orderid, item.orderstatus)}
                 variant="titleSmall"
                 style={{ textDecorationLine: "underline", padding: 5 }}
               >
@@ -228,7 +228,7 @@ export default function Orders({ navigation }) {
       />
       <UpdateOrderStatus
         value={editStatusData}
-        hideModal={hideModal}
+        hideModal={hideUpdateStatus}
         setOrders={setOrders}
         visible={visible}
       />

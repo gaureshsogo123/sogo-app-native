@@ -35,11 +35,11 @@ const styles = StyleSheet.create({
     width: 300,
     borderRadius: 5,
   },
-  head:{
-    fontFamily:"serif",
-    fontWeight:"500",
-    fontSize:35
-  }
+  head: {
+    fontFamily: "serif",
+    fontWeight: "500",
+    fontSize: 35,
+  },
 });
 
 function SignIn({ navigation }) {
@@ -90,7 +90,6 @@ function SignIn({ navigation }) {
           if (!res.error) {
             loginUser(res.data);
             resetInputs();
-            navigation.navigate("Home");
           }
         })
         .catch((err) => setErrors({ ...errors, otp: err.message }));
@@ -100,7 +99,10 @@ function SignIn({ navigation }) {
   return (
     <>
       <View style={styles.sogoBg}>
-        <Text variant="displayMedium" style={styles.head}> SOGO</Text>
+        <Text variant="displayMedium" style={styles.head}>
+          {" "}
+          SOGO
+        </Text>
       </View>
       <View
         style={{
@@ -113,7 +115,11 @@ function SignIn({ navigation }) {
             <TextInput
               style={styles.textInput}
               mode="outlined"
-              label={<Text style={{backgroundColor:"white",color:"gray"}}>Phone Number</Text>}
+              label={
+                <Text style={{ backgroundColor: "white", color: "gray" }}>
+                  Phone Number
+                </Text>
+              }
               keyboardType={"numeric"}
               value={mobileNumber}
               onChangeText={(e) => {
@@ -155,7 +161,11 @@ function SignIn({ navigation }) {
                 style={styles.textInput}
                 keyboardType="numeric"
                 mode="outlined"
-                label={<Text style={{backgroundColor:"white",color:"gray"}}>Enter OTP</Text>}
+                label={
+                  <Text style={{ backgroundColor: "white", color: "gray" }}>
+                    Enter OTP
+                  </Text>
+                }
                 value={otp}
                 secureTextEntry={true}
                 onChangeText={(e) => {

@@ -1,4 +1,5 @@
 import axiosInstance from "../../../../axiosInstance";
+import axios from "axios";
 
 export const fetchProducts = async (
   userId,
@@ -56,6 +57,37 @@ export const saveOrder = async (
 export const getOrderDetails = async (distributorId, orderId) => {
   return axiosInstance
     .get(`/order/${distributorId}/${orderId}`)
+    .then((res) => {
+      return { data: res.data.data };
+    })
+    .catch((err) => {
+      return { error: err.message };
+    });
+};
+
+export const editOrder = async (
+  userId,
+  totalItems,
+  orderTotal,
+  paymentMethod,
+  subTotal,
+  products,
+  discount,
+  orderId,
+  retailerId
+) => {
+  return axiosInstance
+    .put("/order/editOrder", {
+      userId,
+      totalItems,
+      orderTotal,
+      paymentMethod,
+      subTotal,
+      products,
+      discount,
+      orderId,
+      retailerId,
+    })
     .then((res) => {
       return { data: res.data.data };
     })

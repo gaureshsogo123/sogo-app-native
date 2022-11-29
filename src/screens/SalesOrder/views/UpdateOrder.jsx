@@ -11,9 +11,10 @@ import { TextInput, Text } from "react-native-paper";
 import { useAuthContext } from "../../../contexts/authContext";
 import {
   fetchProducts,
-  saveOrder,
+  editOrder,
   getOrderDetails,
 } from "../helpers/salesOrderHelper";
+import { getRetailers } from "../../landingpage/helpers/landingPageHelper";
 import { calculateTotal } from "../helpers/calculateTotal";
 import Product from "./Product";
 
@@ -31,19 +32,23 @@ function UpdateOrder({ navigation, route }) {
   const { user } = useAuthContext();
   const { order } = route.params;
 
-  const { retailerId } = route.params;
   const [refreshing, setRefreshing] = useState(true);
   const [products, setProducts] = useState([]);
+  const [orderDetails, setOrderDetails] = useState();
+  const [retailers, setRetailers] = useState();
   const [errors, setErrors] = useState({});
   const [price, setPrice] = useState({ total: 0, discount: 0, finalPrice: 0 });
   const [searchFilter, setSearchFilter] = useState("");
 
-  const placeOrder = async () => {
+  const updateOrder = async () => {
     setErrors({ ...errors, saveOrder: "" });
     const orderProducts = products.filter((product) => product.quantity !== 0);
     if (orderProducts.length === 0) return;
+    const retailerId = retailers.find(
+      (retailer) => retailer.name === orderDetails[0].name
+    ).userid;
     try {
-      const result = await saveOrder(
+      const result = await editOrder(
         user.userId,
         orderProducts.length,
         price.finalPrice,
@@ -51,31 +56,36 @@ function UpdateOrder({ navigation, route }) {
         price.total,
         orderProducts,
         price.discount,
+        order.orderid,
         retailerId
       );
       if (!result.error) {
-        Alert.alert("Success", "Your order has been successfully placed!");
+        Alert.alert("Success", "Your order has been successfully updated!");
         navigation.navigate("Orders");
       } else setErrors({ ...errors, saveOrder: result.error });
     } catch (error) {
-      setErrors({ ...errors, saveOrder: "Failed to save order" });
+      Alert.alert("Error", "Order could not be updated!");
     }
   };
+
+  useEffect(() => {
+    fetchRetailers();
+  }, []);
 
   useEffect(() => {
     if (!user) return;
     setErrors({ ...errors, products: "" });
     getProducts();
-  }, [user?.userId, order.orderid]);
+  }, [order.orderid]);
 
   const getProducts = async () => {
     setRefreshing(true);
     try {
       const products = await fetchProducts(user.userId, 0, "ALL");
       const orderDetails = await getOrderDetails(user.userId, order.orderid);
-      console.log(orderDetails.data);
       if (orderDetails.data) {
         // map product quantity to product quantity in order
+        setOrderDetails(orderDetails.data);
         products.data = products.data.map((product) => ({
           ...product,
           quantity:
@@ -91,6 +101,16 @@ function UpdateOrder({ navigation, route }) {
     } finally {
       setRefreshing(false);
     }
+  };
+
+  const fetchRetailers = async () => {
+    getRetailers(user.userId)
+      .then((data) => {
+        setRetailers(data);
+      })
+      .catch(() =>
+        setErrors({ ...errors, retailers: "Couldn't get retailers" })
+      );
   };
 
   useEffect(() => {
@@ -153,7 +173,7 @@ function UpdateOrder({ navigation, route }) {
         }
       />
 
-      <Button onPress={placeOrder} mode="contained" style={styles.orderButton}>
+      <Button onPress={updateOrder} mode="contained" style={styles.orderButton}>
         Update Order
       </Button>
     </>
