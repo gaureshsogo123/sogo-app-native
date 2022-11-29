@@ -7,7 +7,7 @@ export const getOrderReport = (userId,date)=>{
     return axiosInstance
     .post(`/order/summary`, { userId,date:formatDate})
     .then((res) => {
-      console.log("ordersummery",res.data.data);
+      
       return { data: res.data.data };
     })
     .catch((err) => {

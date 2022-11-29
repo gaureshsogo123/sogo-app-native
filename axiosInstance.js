@@ -5,4 +5,3 @@ export default axiosInstance = axios.create({
 });
 
 
-const num = ""

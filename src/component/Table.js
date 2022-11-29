@@ -3,14 +3,7 @@ import { View } from "react-native";
 import { DataTable } from "react-native-paper";
 
 function Table({products}) {
-  const data = [
-    { inm: "dosa batterr", Qty: 20, price: 200 },
-    { inm: "Chapati", Qty: 30, price: 300 },
-    { inm: "Ata", Qty: 20, price: 200 },
-    { inm: "Ata", Qty: 20, price: 200 },
-    { inm: "Ata", Qty: 20, price: 200 },
-    { inm: "Ata", Qty: 20, price: 200 },
-  ];
+  
   return (
     <View>
       <DataTable>
