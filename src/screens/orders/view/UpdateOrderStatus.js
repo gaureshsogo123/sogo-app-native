@@ -39,7 +39,6 @@ function UpdateOrderStatus({ value, hideModal, setOrders, visible }) {
         newStatus
       );
       if (response.data) setOrders(response.data);
-      // Alert.alert("Success", `Status updated successfully: ${newStatus}`);
     } catch (error) {
       Alert.alert("Error", "There was an error");
     } finally {

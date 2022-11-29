@@ -5,32 +5,16 @@ import {
   TouchableOpacity,
   View,
   RefreshControl,
-  Alert,
 } from "react-native";
 import { TextInput, Text, Button, HelperText } from "react-native-paper";
+import { format, subDays } from "date-fns";
 import DatePicker from "../../../component/DatePicker";
 import CitySmallFilter from "../../../component/CitySmallFilter";
 import StatusFilter from "../../../component/StatusFilter";
 import { useAuthContext } from "../../../contexts/authContext";
-import { getOrders, getOrderStatus } from "../helpers/ordersHelper";
+import { getOrders } from "../helpers/ordersHelper";
 import statuses from "../../../constants/statusOptions";
 import UpdateOrderStatus from "./UpdateOrderStatus";
-
-function formatDate(string) {
-  const date = new Date(string);
-  return `${date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()}-${
-    date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-  }-${date.getFullYear()}`;
-}
-
-function oneMonthAgo() {
-  let date = new Date();
-  if (date.getMonth === 0) {
-    date.setMonth(11);
-    date.setFullYear(date.getFullYear() - 1);
-  } else date.setMonth(date.getMonth() - 1);
-  return date;
-}
 
 export default function Orders({ navigation }) {
   const { user } = useAuthContext();
@@ -41,7 +25,7 @@ export default function Orders({ navigation }) {
 
   const [searchFilter, setSearchFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [startDate, setStartDate] = useState(oneMonthAgo());
+  const [startDate, setStartDate] = useState(subDays(new Date(), 2));
   const [endDate, setEndDate] = useState(new Date());
   const [status, setStatus] = useState("");
   const [errors, setErrors] = useState({});
@@ -105,7 +89,9 @@ export default function Orders({ navigation }) {
             {item.name}
           </Text>
           <View style={styles.leftitems}>
-            <Text variant="titleSmall">{formatDate(item.orderdate)}</Text>
+            <Text variant="titleSmall">
+              {format(new Date(item.orderdate), "dd-MM-yyyy")}
+            </Text>
             <Text variant="titleSmall">
               Status:{" "}
               <Text
@@ -121,16 +107,6 @@ export default function Orders({ navigation }) {
             <Text style={{ paddingTop: 10 }}>
               Amt : {`\u20B9`} {item.totalamount}
             </Text>
-            {/*<TouchableOpacity style={{ display: "flex", alignItems: "flex-end" }}
-          onPress={()=>navigation.navigate("UpdteOrder")}>
-
-            <AntDesign
-              onPress={() => redirectToUpdate(item)}
-              name="edit"
-              size={28}
-              style={{ paddingTop: 10, paddingRight: 10 }}
-            />
-    </TouchableOpacity> */}
           </View>
         </View>
       </TouchableOpacity>
