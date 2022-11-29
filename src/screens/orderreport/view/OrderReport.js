@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Button, TextInput } from "react-native-paper";
-import DatePicker from "../../../component/DatePicker";
+//import { Button, TextInput } from "react-native-paper";
+//import DatePicker from "../../../component/DatePicker";
 import Table from "../../../component/Table";
 
 import { getOrderReport } from "../helper/OederReportHelper";
@@ -9,7 +9,7 @@ import { useAuthContext } from "../../../contexts/authContext";
 
 export default function OrderReport() {
   const [date, setDate] = useState(new Date());
-  const [flag, setFlag] = useState(false);
+ // const [flag, setFlag] = useState(false);
   const [products, setProducts] = useState([]);
 
   const { user } = useAuthContext();
@@ -23,9 +23,9 @@ export default function OrderReport() {
 
   return (
     <>
-      <View style={styles.container}>
+      {/* <View style={styles.container}>
         <View style={styles.pagecontainer}>
-          {/*  <View
+            <View
             style={{
               alignItems: "center",
             }}
@@ -38,7 +38,7 @@ export default function OrderReport() {
                 {<CitySmallFilter />}
               </View>
             </View>
-          </View>*/}
+          </View>
           <TextInput style={styles.input} placeholder="Search Retailers" />
 
           {flag && (
@@ -93,7 +93,7 @@ export default function OrderReport() {
             Total : Rs.2000
           </Text>
         </View>
-      </View>
+      </View>*/}
 
       <ScrollView>
         <View style={styles.container}>
