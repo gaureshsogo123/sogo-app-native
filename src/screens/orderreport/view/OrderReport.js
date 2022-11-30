@@ -98,7 +98,10 @@ export default function OrderReport() {
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.pagecontainer}>
+            {
+              products.length==0?<Text style={{textAlign:'center',fontWeight:"500",fontSize:18}}>No Orders...</Text>:
             <Table products={products} />
+}
           </View>
         </View>
       </ScrollView>
