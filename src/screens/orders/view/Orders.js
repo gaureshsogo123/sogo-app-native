@@ -92,14 +92,21 @@ export default function Orders({ navigation }) {
           </Text>
           <View style={styles.leftitems}>
             <Text >
-              {format(new Date(item.orderdate), "dd-MM-yyyy")}
+             Order Date : {format(new Date(item.orderdate), "dd-MM-yyyy")}
             </Text>
-            <Text variant="titleSmall" style={{textAlignVertical:"center"}}>
-              Status:{" "}
+            
+           
+          </View>
+          <View style={styles.rightitems}>
+            <Text style={{ paddingTop: 10,paddingBottom:10 }}>
+              Amt : {`\u20B9`} {parseFloat(item.totalamount).toFixed(2)}
+            </Text>
+            <Text  style={{textAlignVertical:"center"}}>
+              Status :{" "}
               
               <Text
                 onPress={() => showUpdateStatus(item.orderid, item.orderstatus)}
-                variant="titleSmall"
+               
                 style={{ padding:5 }}
               >
                 {item.orderstatus}
@@ -107,11 +114,7 @@ export default function Orders({ navigation }) {
               </Text>
               <AntDesign size={10} name="caretdown" color="gray"/>
             </Text>
-          </View>
-          <View style={styles.rightitems}>
-            <Text style={{ paddingTop: 10 }}>
-              Amt : {`\u20B9`} {parseFloat(item.totalamount).toFixed(2)}
-            </Text>
+          
           </View>
         </View>
       </TouchableOpacity>
