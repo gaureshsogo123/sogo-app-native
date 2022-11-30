@@ -73,11 +73,12 @@ export default function LandingScreen({ navigation }) {
         <View style={styles.pagecontainer}>
           <Text
             style={{
-              fontWeight: "700",
+              fontWeight: "600",
               fontSize: 18,
               paddingBottom: 3,
               marginLeft: "3%",
             }}
+            variant="titleMedium"
           >
             Select Customer
           </Text>
@@ -131,7 +132,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     width: "100%",
     height: 50,
-    borderRadius: 10,
   },
   list: {
     width: "95%",
