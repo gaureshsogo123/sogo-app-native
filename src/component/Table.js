@@ -11,7 +11,6 @@ function Table({products}) {
           <DataTable.Header>
             <DataTable.Title>Item Name</DataTable.Title>
             <DataTable.Title numeric>Qty</DataTable.Title>
-            <DataTable.Title numeric>Amount</DataTable.Title>
           </DataTable.Header>
         </View>
         {products.map((val, i) => {
@@ -29,7 +28,6 @@ function Table({products}) {
                   {val.productname}
                 </DataTable.Cell>
                 <DataTable.Cell numeric>{val.productquantity}</DataTable.Cell>
-                <DataTable.Cell numeric>100</DataTable.Cell>
               </DataTable.Row>
             </View>
           );

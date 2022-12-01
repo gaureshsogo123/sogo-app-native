@@ -14,6 +14,10 @@ import { useAuthContext } from "../../../contexts/authContext";
 import { getOrders } from "../helpers/ordersHelper";
 import statuses from "../../../constants/statusOptions";
 import UpdateOrderStatus from "./UpdateOrderStatus";
+import { AntDesign } from "@expo/vector-icons";
+
+
+
 
 export default function Orders({ navigation }) {
   const { user } = useAuthContext();
@@ -87,24 +91,30 @@ export default function Orders({ navigation }) {
             {item.name}
           </Text>
           <View style={styles.leftitems}>
-            <Text variant="titleSmall">
-              {format(new Date(item.orderdate), "dd-MM-yyyy")}
+            <Text >
+             Order Date : {format(new Date(item.orderdate), "dd-MM-yyyy")}
             </Text>
-            <Text variant="titleSmall">
-              Status:{" "}
-              <Text
-                onPress={() => showUpdateStatus(item.orderid, item.orderstatus)}
-                variant="titleSmall"
-                style={{ textDecorationLine: "underline", padding: 5 }}
-              >
-                {item.orderstatus}
-              </Text>
-            </Text>
+            
+           
           </View>
           <View style={styles.rightitems}>
-            <Text style={{ paddingTop: 10 }}>
+            <Text style={{ paddingTop: 10,paddingBottom:10 }}>
               Amt : {`\u20B9`} {parseFloat(item.totalamount).toFixed(2)}
             </Text>
+            <Text  style={{textAlignVertical:"center"}}>
+              Status :{" "}
+              
+              <Text
+                onPress={() => showUpdateStatus(item.orderid, item.orderstatus)}
+               
+                style={{ padding:5 }}
+              >
+                {item.orderstatus}
+                
+              </Text>
+              <AntDesign size={10} name="caretdown" color="gray"/>
+            </Text>
+          
           </View>
         </View>
       </TouchableOpacity>
@@ -250,8 +260,8 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: "3%",
     position: "relative",
-    borderColor: "silver",
     borderWidth: 1,
+    borderColor:"silver",
   },
   locationcontainer: {
     display: "flex",
