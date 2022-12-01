@@ -220,11 +220,11 @@ function SignIn({ navigation }) {
                     Enter Pass code
                   </Text>
                 }
-                value={passcode}
+                value={otp}
                 secureTextEntry={true}
                 onChangeText={(e) => {
                   setErrors({ ...errors, otp: "" });
-                  setPasscode(e);
+                  setOtp(e);
                 }}
               ></TextInput>
               <Button mode="text" onPress={handleForgot} style={styles.resend}>
