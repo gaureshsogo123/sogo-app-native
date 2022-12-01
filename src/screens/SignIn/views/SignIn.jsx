@@ -48,6 +48,9 @@ function SignIn({ navigation }) {
   const [otp, setOtp] = useState();
   const [errors, setErrors] = useState({});
   const [otpGenerated, setOtpGenerated] = useState(false);
+  const [forgot, setForgot] = useState(false);
+  const [passcode, setPasscode] = useState();
+  const [confirm, setConfirm] = useState();
 
   const { loginUser, isLoggedIn } = useAuthContext();
 
@@ -96,6 +99,17 @@ function SignIn({ navigation }) {
     }
   };
 
+  const resetPasscode = () => {
+    setOtpGenerated(false);
+    setForgot(false);
+    setPasscode();
+    setConfirm();
+    setMobileNumber();
+  };
+
+  const handleForgot = () => {
+    setForgot(true);
+  };
   return (
     <>
       <View style={styles.sogoBg}>
@@ -110,7 +124,7 @@ function SignIn({ navigation }) {
           backgroundColor: theme.colors.background,
         }}
       >
-        {!otpGenerated ? (
+        {!otpGenerated && !forgot ? (
           <>
             <TextInput
               style={styles.textInput}
@@ -142,43 +156,79 @@ function SignIn({ navigation }) {
               Continue
             </Button>
           </>
-        ) : (
+        ) : // <>
+        //   <View
+        //     style={{
+        //       marginBottom: 10,
+        //       display: "flex",
+        //       flexDirection: "row",
+        //       justifyContent: "center",
+        //       alignItems: "center",
+        //     }}
+        //   >
+        //     <Button icon={"arrow-left"} onPress={resetInputs} />
+        //     <Text> OTP has been sent to +91 {mobileNumber}</Text>
+        //   </View>
+        //   <View>
+        //     <TextInput
+        //       style={styles.textInput}
+        //       keyboardType="numeric"
+        //       mode="outlined"
+        //       label={
+        //         <Text style={{ backgroundColor: "white", color: "gray" }}>
+        //           Enter OTP
+        //         </Text>
+        //       }
+        //       value={otp}
+        //       secureTextEntry={true}
+        //       onChangeText={(e) => {
+        //         setErrors({ ...errors, otp: "" });
+        //         setOtp(e);
+        //       }}
+        //     ></TextInput>
+        //     <Button
+        //       mode="text"
+        //       onPress={handleMobileNumber}
+        //       style={styles.resend}
+        //     >
+        //       Resend
+        //     </Button>
+        //     <HelperText
+        //       style={{ textAlign: "center" }}
+        //       type="error"
+        //       visible={errors.otp}
+        //     >
+        //       {errors.otp}{" "}
+        //     </HelperText>
+        //     <Button
+        //       style={styles.button}
+        //       mode="contained"
+        //       onPress={handleOtp}
+        //     >
+        //       Submit OTP
+        //     </Button>
+        //   </View>
+        // </>
+        !forgot ? (
           <>
-            <View
-              style={{
-                marginBottom: 10,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Button icon={"arrow-left"} onPress={resetInputs} />
-              <Text> OTP has been sent to +91 {mobileNumber}</Text>
-            </View>
             <View>
               <TextInput
                 style={styles.textInput}
-                keyboardType="numeric"
                 mode="outlined"
                 label={
                   <Text style={{ backgroundColor: "white", color: "gray" }}>
-                    Enter OTP
+                    Enter Pass code
                   </Text>
                 }
-                value={otp}
+                value={passcode}
                 secureTextEntry={true}
                 onChangeText={(e) => {
                   setErrors({ ...errors, otp: "" });
-                  setOtp(e);
+                  setPasscode(e);
                 }}
               ></TextInput>
-              <Button
-                mode="text"
-                onPress={handleMobileNumber}
-                style={styles.resend}
-              >
-                Resend
+              <Button mode="text" onPress={handleForgot} style={styles.resend}>
+                Forgot Password
               </Button>
               <HelperText
                 style={{ textAlign: "center" }}
@@ -192,7 +242,59 @@ function SignIn({ navigation }) {
                 mode="contained"
                 onPress={handleOtp}
               >
-                Submit OTP
+                Submit Pass Code
+              </Button>
+            </View>
+          </>
+        ) : (
+          <>
+            <View>
+              <TextInput
+                style={styles.textInput}
+                mode="outlined"
+                label={
+                  <Text style={{ backgroundColor: "white", color: "gray" }}>
+                    New Password
+                  </Text>
+                }
+                value={passcode}
+                secureTextEntry={true}
+                onChangeText={(e) => {
+                  setErrors({ ...errors, confirm: "" });
+                  setPasscode(e);
+                }}
+              ></TextInput>
+              <TextInput
+                style={{ ...styles.textInput, marginBottom: 10 }}
+                mode="outlined"
+                label={
+                  <Text style={{ backgroundColor: "white", color: "gray" }}>
+                    Confirm Password
+                  </Text>
+                }
+                value={confirm}
+                onChangeText={(e) => {
+                  if (passcode !== e) {
+                    setErrors({ ...errors, confirm: "Passcodes do not match" });
+                  } else {
+                    setErrors({ ...errors, confirm: "" });
+                  }
+                  setConfirm(e);
+                }}
+              ></TextInput>
+              <HelperText
+                style={{ textAlign: "center" }}
+                type="error"
+                visible={errors.confirm}
+              >
+                {errors.confirm}{" "}
+              </HelperText>
+              <Button
+                style={styles.button}
+                mode="contained"
+                onPress={resetPasscode}
+              >
+                Submit new passcode
               </Button>
             </View>
           </>
