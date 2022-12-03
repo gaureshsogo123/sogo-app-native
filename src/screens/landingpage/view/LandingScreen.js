@@ -39,7 +39,7 @@ export default function LandingScreen({ navigation }) {
   };
 
   const handlePress = (item) => {
-    navigation.push(`CreateOrder`, {
+    navigation.navigate(`CreateOrder`, {
       retailerName: item.name,
       retailerId: item.userid,
     });

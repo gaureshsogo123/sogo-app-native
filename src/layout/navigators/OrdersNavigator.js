@@ -1,37 +1,37 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuthContext } from "../../contexts/authContext";
 
-import LandingScreen from "../../screens/landingpage/view/LandingScreen";
+import Orders from "../../screens/orders/view/Orders";
 import CreateOrder from "../../screens/SalesOrder/views/CreateOrder";
-// import UpdateOrder from "../../screens/SalesOrder/views/UpdateOrder";
+import UpdateOrder from "../../screens/SalesOrder/views/UpdateOrder";
 
-const HomeStackNavigator = createNativeStackNavigator();
+const OrderStackNavigator = createNativeStackNavigator();
 
-export default HomeNavigator = () => {
+export default OrderNavigator = () => {
   const { user } = useAuthContext();
   return (
-    <HomeStackNavigator.Navigator>
-      <HomeStackNavigator.Screen
-        name="LandingPage"
-        component={LandingScreen}
+    <OrderStackNavigator.Navigator>
+      <OrderStackNavigator.Screen
+        name="OrdersList"
+        component={Orders}
         options={{
-          title: user?.userName,
+          title: "My Orders",
         }}
       />
-      <HomeStackNavigator.Screen
+      {/* <OrderStackNavigator.Screen
         name="CreateOrder"
         component={CreateOrder}
         options={{
           title: "Create Sales Order",
         }}
-      />
-      {/*<HomeStackNavigator.Screen
+      /> */}
+      <OrderStackNavigator.Screen
         name="UpdateOrder"
         component={UpdateOrder}
         options={{
           title: "Update Order",
         }}
-      /> */}
-    </HomeStackNavigator.Navigator>
+      />
+    </OrderStackNavigator.Navigator>
   );
 };

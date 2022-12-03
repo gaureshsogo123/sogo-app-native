@@ -50,7 +50,7 @@ function CreateOrder({ route, navigation }) {
       );
       if (!result.error) {
         Alert.alert("Success", "Your order has been successfully placed!");
-        navigation.navigate("Orders");
+        navigation.navigate("Orders", { screen: "OrdersList" });
       } else setErrors({ ...errors, saveOrder: result.error });
     } catch (error) {
       setErrors({ ...errors, saveOrder: "Failed to save order" });

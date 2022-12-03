@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Orders from "../screens/orders/view/Orders";
 import { AntDesign } from "@expo/vector-icons";
 import OrderReport from "../screens/orderreport/view/OrderReport";
 import Signout from "../screens/Signout/view/Signout,";
 import HomeNavigator from "./navigators/HomeNavigator";
+import OrdersNavigator from "./navigators/OrdersNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -21,21 +21,18 @@ export default function BottomNav() {
           tabBarIcon: (props) => <BottomIconContainer name="home" {...props} />,
           headerShown: false,
           ...defaultTabOptions,
-
         }}
       />
       <Tab.Screen
         name="Orders"
-        component={Orders}
+        component={OrdersNavigator}
         options={{
           tabBarIcon: (props) => <BottomIconContainer name="book" {...props} />,
           title: "My Orders",
+          headerShown: false,
           ...defaultTabOptions,
-          headerTitleStyle:{marginLeft:10}
+          headerTitleStyle: { marginLeft: 10 },
         }}
-        
-
-      
       />
       <Tab.Screen
         name="Order Report"
@@ -46,7 +43,7 @@ export default function BottomNav() {
           ),
           title: "Order Report",
           ...defaultTabOptions,
-          headerTitleStyle:{marginLeft:8}
+          headerTitleStyle: { marginLeft: 8 },
         }}
       />
       <Tab.Screen

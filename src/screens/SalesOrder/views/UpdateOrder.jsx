@@ -61,7 +61,7 @@ function UpdateOrder({ navigation, route }) {
       );
       if (!result.error) {
         Alert.alert("Success", "Your order has been successfully updated!");
-        navigation.navigate("Orders");
+        navigation.navigate("Orders", { screen: "OrdersList" });
       } else setErrors({ ...errors, saveOrder: result.error });
     } catch (error) {
       Alert.alert("Error", "Order could not be updated!");

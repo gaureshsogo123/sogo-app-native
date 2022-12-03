@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 //import { Button, TextInput } from "react-native-paper";
-//import DatePicker from "../../../component/DatePicker";
+import DatePicker from "../../../component/DatePicker";
 import Table from "../../../component/Table";
 
 import { getOrderReport } from "../helper/OederReportHelper";
@@ -9,7 +9,7 @@ import { useAuthContext } from "../../../contexts/authContext";
 
 export default function OrderReport() {
   const [date, setDate] = useState(new Date());
- // const [flag, setFlag] = useState(false);
+  // const [flag, setFlag] = useState(false);
   const [products, setProducts] = useState([]);
 
   const { user } = useAuthContext();
@@ -23,14 +23,14 @@ export default function OrderReport() {
 
   return (
     <>
-      {/* <View style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.pagecontainer}>
-            <View
+          {/* <View
             style={{
               alignItems: "center",
             }}
           >
-          <View style={styles.newlocationcontainer}>
+            <View style={styles.newlocationcontainer}>
               <Text style={{ fontWeight: "600", fontSize: 15 }}>
                 Location :
               </Text>
@@ -38,47 +38,47 @@ export default function OrderReport() {
                 {<CitySmallFilter />}
               </View>
             </View>
-          </View>
-          <TextInput style={styles.input} placeholder="Search Retailers" />
+          </View> */}
+          {/* <TextInput style={styles.input} placeholder="Search Retailers" /> */}
 
-          {flag && (
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-                marginBottom: "4%",
-              }}
-            >
-              <View style={styles.locationcontainer}>
-                <Text
-                  style={{
-                    fontWeight: "600",
-                    fontSize: 15,
-                    textAlignVertical: "center",
-                  }}
-                >
-                  Date :
-                </Text>
-                <View>
-                  <DatePicker
-                    date={date}
-                    setDate={setDate}
-                    text={"From"}
-                    showFlag={true}
-                  />
-                </View>
+          {/* {flag && ( */}
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+              marginBottom: "4%",
+            }}
+          >
+            <View style={styles.locationcontainer}>
+              <Text
+                style={{
+                  fontWeight: "600",
+                  fontSize: 15,
+                  textAlignVertical: "center",
+                }}
+              >
+                Date :
+              </Text>
+              <View>
+                <DatePicker
+                  date={date}
+                  setDate={setDate}
+                  text={"From"}
+                  showFlag={true}
+                />
               </View>
             </View>
-          )}
+          </View>
+          {/* )} */}
 
-          <Button
+          {/* <Button
             onPress={() => setFlag(!flag)}
             mode="contained"
             style={{ borderRadius: 3 }}
           >
             {flag ? "Hide Filters" : "Show Filters"}
-          </Button>
+          </Button> */}
 
           <View
             style={{
@@ -93,15 +93,20 @@ export default function OrderReport() {
             Total : Rs.2000
           </Text>
         </View>
-      </View>*/}
+      </View>
 
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.pagecontainer}>
-            {
-              products.length==0?<Text style={{textAlign:'center',fontWeight:"500",fontSize:18}}>No Orders...</Text>:
-            <Table products={products} />
-}
+            {products?.length == 0 ? (
+              <Text
+                style={{ textAlign: "center", fontWeight: "500", fontSize: 18 }}
+              >
+                No Orders...
+              </Text>
+            ) : (
+              <Table products={products} />
+            )}
           </View>
         </View>
       </ScrollView>
