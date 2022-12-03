@@ -3,7 +3,6 @@ import { useAuthContext } from "../../contexts/authContext";
 
 import LandingScreen from "../../screens/landingpage/view/LandingScreen";
 import CreateOrder from "../../screens/SalesOrder/views/CreateOrder";
-// import UpdateOrder from "../../screens/SalesOrder/views/UpdateOrder";
 
 const HomeStackNavigator = createNativeStackNavigator();
 
@@ -25,13 +24,6 @@ export default HomeNavigator = () => {
           title: "Create Sales Order",
         }}
       />
-      {/*<HomeStackNavigator.Screen
-        name="UpdateOrder"
-        component={UpdateOrder}
-        options={{
-          title: "Update Order",
-        }}
-      /> */}
     </HomeStackNavigator.Navigator>
   );
 };
